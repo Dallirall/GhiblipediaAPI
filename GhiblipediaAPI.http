@@ -1,0 +1,6 @@
+@GhiblipediaAPI_HostAddress = http://localhost:5080
+
+GET {{GhiblipediaAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
