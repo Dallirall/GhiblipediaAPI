@@ -6,11 +6,11 @@ namespace GhiblipediaAPI.Models
     public class MovieTag
     {
         [ForeignKey("Movie")]
-        public int MovieId { get; set; }
+        public int Movie_id { get; set; }
         public Movie Movie { get; set; }
 
         [ForeignKey("Tag")]
-        public int TagId { get; set; }
-        public Tag Tag { get; set; }
+        public int Tag_id { get; set; }
+        public Search_tag Tag { get; set; }
     }
 }
