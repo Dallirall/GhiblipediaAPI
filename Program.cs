@@ -1,7 +1,14 @@
 using Microsoft.OpenApi.Models;
+using Microsoft.Data.SqlClient;
+using System.Data;
+using GhiblipediaAPI.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddScoped<IDbConnection>(sp =>
+    new SqlConnection(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.AddScoped<MovieRepository>();
 
 builder.Services.AddCors(options =>
 {
