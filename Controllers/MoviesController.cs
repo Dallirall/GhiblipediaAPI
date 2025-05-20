@@ -9,9 +9,9 @@ namespace GhiblipediaAPI.Controllers
     [Route("api/[controller]")]
     public class MoviesController : ControllerBase
     {
-        private readonly MovieRepository _movieRepo;
+        private readonly IMovieRepository _movieRepo;
 
-        public MoviesController(MovieRepository movieRepo)
+        public MoviesController(IMovieRepository movieRepo)
         {
             _movieRepo = movieRepo;
         }
