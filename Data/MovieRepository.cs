@@ -1,5 +1,6 @@
 ﻿using Dapper;
 using GhiblipediaAPI.Models;
+using GhiblipediaAPI.Services;
 using System.Collections.Generic;
 using System.Data;
 
@@ -31,7 +32,9 @@ namespace GhiblipediaAPI.Data
 
         public void PostMovieInDB(Movie movie)
         {
+            string sqlQuery = CustomSqlServices.CreateQueryStringFromObject(movie, "movies");
 
+            _db.Execute(sqlQuery, movie);
         }
     }
 }

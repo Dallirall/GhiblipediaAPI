@@ -39,7 +39,9 @@ namespace GhiblipediaAPI.Controllers
         [HttpPost]
         public IActionResult Post([FromBody] Movie movie)
         {
+            _movieRepo.PostMovieInDB(movie);
 
+            return CreatedAtAction(nameof(Get), movie);
         }
     }
 }
