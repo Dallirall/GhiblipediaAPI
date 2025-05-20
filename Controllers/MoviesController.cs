@@ -35,6 +35,12 @@ namespace GhiblipediaAPI.Controllers
 
             return Ok(movie);
         }
+
+        [HttpPost]
+        public IActionResult Post([FromBody] Movie movie)
+        {
+
+        }
     }
 }
 //[ProducesResponseType<T>(StatusCodes.Status200OK)]

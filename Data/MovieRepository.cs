@@ -5,7 +5,7 @@ using System.Data;
 
 namespace GhiblipediaAPI.Data
 {
-    public class MovieRepository
+    public class MovieRepository : IMovieRepository
     {
         private readonly IDbConnection _db;
 
@@ -14,6 +14,7 @@ namespace GhiblipediaAPI.Data
             _db = db;
         }
 
+        //Async??
         public IEnumerable<Movie> GetAllMovies()
         {
             string sqlQuery = "SELECT * FROM movies;";
@@ -26,6 +27,11 @@ namespace GhiblipediaAPI.Data
             string slqQuery = $"SELECT * FROM movies WHERE movie_id = {id};";
 
             return _db.QueryFirstOrDefault<Movie>(slqQuery);
+        }
+
+        public void PostMovieInDB(Movie movie)
+        {
+
         }
     }
 }
