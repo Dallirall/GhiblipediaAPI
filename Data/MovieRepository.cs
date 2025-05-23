@@ -30,9 +30,21 @@ namespace GhiblipediaAPI.Data
             return _db.QueryFirstOrDefault<Movie>(slqQuery);
         }
 
+        public Movie GetMovieByTitle(string english_title)
+        {
+            string slqQuery = $"SELECT * FROM movies WHERE english_title = '{english_title}';";
+
+            return _db.QueryFirstOrDefault<Movie>(slqQuery);
+        }
+
         public void PostMovieInDB(Movie movie)
         {
-            string sqlQuery = CustomSqlServices.CreateQueryStringFromObject(movie, "movies");
+            if (movie.Movie_id != null)
+            {
+                movie.Movie_id = null; //This field auto-increment by default.
+            }
+
+            string sqlQuery = CustomSqlServices.CreateInsertQueryStringFromObject(movie, "movies");
 
             _db.Execute(sqlQuery, movie);
         }

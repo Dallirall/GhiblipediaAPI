@@ -5,7 +5,7 @@ namespace GhiblipediaAPI.Services
     public class CustomSqlServices
     {
 
-        public static string CreateQueryStringFromObject(object obj, string tableName)
+        public static string CreateInsertQueryStringFromObject(object obj, string tableName)
         {
             //TODO Dubbelkolla denna 
             try

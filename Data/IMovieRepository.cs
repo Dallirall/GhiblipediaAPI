@@ -8,6 +8,9 @@ namespace GhiblipediaAPI.Data
 
         Movie GetMovieById(int id);
 
+        public Movie GetMovieByTitle(string english_title);
+
         void PostMovieInDB(Movie movie);
+                
     }
 }

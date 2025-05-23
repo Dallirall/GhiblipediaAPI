@@ -23,10 +23,23 @@ namespace GhiblipediaAPI.Controllers
             return Ok(movies);
         }
 
-        [HttpGet("{movie_id}")]
+        [HttpGet("id={movie_id}")]
         public ActionResult<Movie> Get(int movie_id)
         {
             var movie = _movieRepo.GetMovieById(movie_id);
+
+            if (movie == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(movie);
+        }
+
+        [HttpGet("title={english_title}")]
+        public ActionResult<Movie> Get(string english_title)
+        {
+            var movie = _movieRepo.GetMovieByTitle(english_title);
 
             if (movie == null)
             {
