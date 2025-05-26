@@ -24,8 +24,8 @@ namespace GhiblipediaAPI.Controllers
             return Ok(movies);
         }
 
-        [HttpGet("id={movie_id}")]
-        public ActionResult<Movie> Get(int movie_id)
+        [HttpGet("by-id")]
+        public ActionResult<Movie> GetById([FromQuery] int movie_id)
         {
             var movie = _movieRepo.GetMovieById(movie_id);
 
@@ -34,8 +34,8 @@ namespace GhiblipediaAPI.Controllers
             return Ok(movie);
         }
 
-        [HttpGet("title={english_title}")]
-        public ActionResult<Movie> Get(string english_title)
+        [HttpGet("by-title")]
+        public ActionResult<Movie> GetByTitle([FromQuery] string english_title)
         {
             var movie = _movieRepo.GetMovieByTitle(english_title);
 
@@ -44,13 +44,16 @@ namespace GhiblipediaAPI.Controllers
             return Ok(movie);
         }
 
-        [HttpGet("title={english_title}")] //ta reda på hur jag fixar detta fel
-        public IActionResult GetMovieSpecificFields(string english_title, [FromQuery] string fields)
+        //Felhantering??
+        [HttpGet("by-title/partial")]
+        public IActionResult GetMovieSpecificFields([FromQuery] string english_title, [FromQuery] string fields)
         {
             var movie = _movieRepo.GetMovieByTitle(english_title);
             if (movie == null) return NotFound();            
 
             var fieldList = fields?.Split(',', StringSplitOptions.RemoveEmptyEntries);
+            if (fieldList == null || fieldList.Length == 0)
+                return Ok(movie);
 
             var result = new Dictionary<string, object>();
             foreach (var field in fieldList)
