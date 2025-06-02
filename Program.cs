@@ -2,6 +2,7 @@ using Microsoft.OpenApi.Models;
 using Microsoft.Data.SqlClient;
 using System.Data;
 using GhiblipediaAPI.Data;
+using System.Web;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -47,6 +48,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
     app.MapOpenApi();
 }
+
+
 
 app.UseHttpsRedirection();
 
