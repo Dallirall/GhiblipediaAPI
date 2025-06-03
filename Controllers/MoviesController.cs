@@ -6,7 +6,7 @@ using System.Text.Json; //Behövs denna?
 namespace GhiblipediaAPI.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    //[Route("api/[controller]")]
     public class MoviesController : ControllerBase
     {
         private readonly IMovieRepository _movieRepo;
@@ -16,16 +16,18 @@ namespace GhiblipediaAPI.Controllers
             _movieRepo = movieRepo;
         }
 
-        //TODO: Gör det async 
-        [HttpGet]
-        public ActionResult<IEnumerable<Movie>> Get()
+        //TODO: Gör det async
+        [HttpGet] //<- Onödig??
+        [Route("api/movies/")]
+        public ActionResult<IEnumerable<Movie>> GetAll()
         {
             var movies = _movieRepo.GetAllMovies();
             return Ok(movies);
         }
 
-        [HttpGet("by-id")]
-        public ActionResult<Movie> GetById([FromQuery] int movie_id)
+        [HttpGet]
+        [Route("api/movies/{movie_id:int}")]        
+        public ActionResult<Movie> GetById(int movie_id)
         {
             var movie = _movieRepo.GetMovieById(movie_id);
 
@@ -34,8 +36,9 @@ namespace GhiblipediaAPI.Controllers
             return Ok(movie);
         }
 
-        [HttpGet("by-title")]
-        public ActionResult<Movie> GetByTitle([FromQuery] string english_title)
+        [HttpGet]
+        [Route("api/movies/{english_title}")]        
+        public ActionResult<Movie> GetByTitle(string english_title)
         {
             var movie = _movieRepo.GetMovieByTitle(english_title);
 
@@ -45,11 +48,11 @@ namespace GhiblipediaAPI.Controllers
         }
 
         //Felhantering??
-        [HttpGet("by-title/partial")]
-        public IActionResult GetMovieSpecificFields([FromQuery] string english_title, [FromQuery] string fields)
+        [Route("api/movies/{english_title}/{fields}")]
+        public IActionResult GetMovieSpecificFields(string english_title, string fields)
         {
             var movie = _movieRepo.GetMovieByTitle(english_title);
-            if (movie == null) return NotFound();            
+            if (movie == null) return NotFound();
 
             var fieldList = fields?.Split(',', StringSplitOptions.RemoveEmptyEntries);
             if (fieldList == null || fieldList.Length == 0)
@@ -90,11 +93,12 @@ namespace GhiblipediaAPI.Controllers
         }
 
         [HttpPost]
+        [Route("api/movies/")]
         public IActionResult Post([FromBody] Movie movie)
         {
             _movieRepo.PostMovieInDB(movie);
 
-            return CreatedAtAction(nameof(Get), movie);
+            return CreatedAtAction(nameof(GetAll), movie);
         }
     }
 }

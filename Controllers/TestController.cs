@@ -14,14 +14,15 @@ public class TestController : ControllerBase
         _movieRepo = movieRepo;
     }
 
-    [Route("api/test/{id:int?}")]
-    public ActionResult GetMovieById(int id = 0)
-    {
-        var movie = _movieRepo.GetMovieById(id);
+    //[Route("api/test/{id:int?}")]
+    //[Route("api/test/{title:string?}")]
+    //public ActionResult GetMovieById(int id = 0, string title = "")
+    //{
+    //    var movie = _movieRepo.GetMovieById(id);
 
-        if (movie == null) return NotFound();
+    //    if (movie == null) return NotFound();
 
-        return Ok(movie);
-    }
+    //    return Ok(movie);
+    //}
 }
 
