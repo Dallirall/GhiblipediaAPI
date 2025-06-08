@@ -9,7 +9,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddScoped<IDbConnection>(sp =>
     new SqlConnection(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-builder.Services.AddScoped<IMovieRepository, MovieRepository>();
+builder.Services.AddTransient<IMovieRepository, MovieRepository>();
 
 builder.Services.AddCors(options =>
 {

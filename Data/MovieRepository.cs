@@ -1,6 +1,7 @@
 ﻿using Dapper;
 using GhiblipediaAPI.Models;
 using GhiblipediaAPI.Services;
+using Microsoft.AspNetCore.Http.HttpResults;
 using System.Collections.Generic;
 using System.Data;
 
@@ -19,14 +20,13 @@ namespace GhiblipediaAPI.Data
         public IEnumerable<Movie> GetAllMovies()
         {
             string sqlQuery = "SELECT * FROM movies;";
-
             return _db.Query<Movie>(sqlQuery);
         }
 
         public Movie GetMovieById(int id)
         {
             string slqQuery = $"SELECT * FROM movies WHERE movie_id = {id};";
-
+            return new Movie() { English_title = "hejhejDI" };
             return _db.QueryFirstOrDefault<Movie>(slqQuery);
         }
 

@@ -1,4 +1,5 @@
 ﻿using GhiblipediaAPI.Data;
+using GhiblipediaAPI.Models;
 
 namespace GhiblipediaAPI.Services
 {
@@ -11,6 +12,16 @@ namespace GhiblipediaAPI.Services
             _movieRepository = movieRepository;
         }
 
+        // Hämta filmer till för listvy
+
+        //public Movie GetMovieByTitle(string title) 
+        //{
+        //    // gå till db
+        //}
+        //public Movie GetMovieId(string id) 
+        //{
+        //    // gå till db
+        //}
 
     }
 }

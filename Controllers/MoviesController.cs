@@ -6,7 +6,7 @@ using System.Text.Json; //Behövs denna?
 namespace GhiblipediaAPI.Controllers
 {
     [ApiController]
-    //[Route("api/[controller]")]
+    [Route("api/[controller]/")]
     public class MoviesController : ControllerBase
     {
         private readonly IMovieRepository _movieRepo;
@@ -17,29 +17,31 @@ namespace GhiblipediaAPI.Controllers
         }
 
         //TODO: Gör det async
-        [HttpGet] //<- Onödig??
-        [Route("api/movies/")]
-        public ActionResult<IEnumerable<Movie>> GetAll()
-        {
-            var movies = _movieRepo.GetAllMovies();
-            return Ok(movies);
-        }
+        //[HttpGet]
+        //[Route("")]
+        //public ActionResult<IEnumerable<Movie>> GetAll()
+        //{
+        //    var movies = _movieRepo.GetAllMovies();
+        //    return Ok(movies);
+        //}
 
         [HttpGet]
-        [Route("api/movies/{movie_id:int}")]        
+        [Route("{movie_id:int}")]
         public ActionResult<Movie> GetById(int movie_id)
         {
+            return Ok();
             var movie = _movieRepo.GetMovieById(movie_id);
 
             if (movie == null) return NotFound();
             
             return Ok(movie);
         }
-
+        //localhost:3000/api/movies/t=tottoro&imovie_id=3&
         [HttpGet]
-        [Route("api/movies/{english_title}")]        
-        public ActionResult<Movie> GetByTitle(string english_title)
+        public ActionResult GetMovieByTitle([FromQuery]string english_title, [FromQuery]  string? year = null, [FromQuery] string? plot = null)
         {
+            _movieRepo.GetMovieById(1);
+            return Ok();
             var movie = _movieRepo.GetMovieByTitle(english_title);
 
             if (movie == null) return NotFound();
@@ -47,8 +49,10 @@ namespace GhiblipediaAPI.Controllers
             return Ok(movie);
         }
 
+        // GetMovieForListView
+
         //Felhantering??
-        [Route("api/movies/{english_title}/{fields}")]
+        [Route("{english_title}/{fields}")]
         public IActionResult GetMovieSpecificFields(string english_title, string fields)
         {
             var movie = _movieRepo.GetMovieByTitle(english_title);
@@ -98,7 +102,7 @@ namespace GhiblipediaAPI.Controllers
         {
             _movieRepo.PostMovieInDB(movie);
 
-            return CreatedAtAction(nameof(GetAll), movie);
+            return Ok();
         }
     }
 }
