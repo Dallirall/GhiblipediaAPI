@@ -6,7 +6,7 @@ using System.Text.Json; //Behövs denna?
 namespace GhiblipediaAPI.Controllers
 {
     [ApiController]
-    //[Route("api/[controller]")]
+    [Route("api/[controller]/")]
     public class MoviesController : ControllerBase
     {
         private readonly IMovieRepository _movieRepo;
@@ -17,16 +17,19 @@ namespace GhiblipediaAPI.Controllers
         }
 
         //TODO: Gör det async
-        [HttpGet] //<- Onödig??
-        [Route("api/movies/")]
+
+        //api/movies (ex: GET api/movies)
+        [HttpGet]
+        [Route("")]
         public ActionResult<IEnumerable<Movie>> GetAll()
         {
             var movies = _movieRepo.GetAllMovies();
             return Ok(movies);
         }
 
+        //api/movies/{movieId} (ex: GET api/movies/1)
         [HttpGet]
-        [Route("api/movies/{movie_id:int}")]        
+        [Route("{movie_id:int}")]        
         public ActionResult<Movie> GetById(int movie_id)
         {
             var movie = _movieRepo.GetMovieById(movie_id);
@@ -36,8 +39,9 @@ namespace GhiblipediaAPI.Controllers
             return Ok(movie);
         }
 
+        //api/movies/{movietitle} (ex: GET api/movies/spirited%20away)
         [HttpGet]
-        [Route("api/movies/{english_title}")]        
+        [Route("{english_title}")]        
         public ActionResult<Movie> GetByTitle(string english_title)
         {
             var movie = _movieRepo.GetMovieByTitle(english_title);
@@ -47,8 +51,29 @@ namespace GhiblipediaAPI.Controllers
             return Ok(movie);
         }
 
+
+        //api/movies/{movietitle}/fullplot || api/movies/{movietitle}/summary (ex: GET api/movies/spirited%20away/fullplot)
+        [HttpGet]
+        [Route("{english_title}/{plotType}")]
+        public ActionResult<Movie> GetFullPlotOrSummary(string english_title, string plotType)
+        {
+            var movie = _movieRepo.GetMovieByTitle(english_title);
+
+            if (movie == null) return NotFound();
+
+            if (plotType.ToLower() == "fullplot")
+            {
+                return Ok(movie.Plot);
+            }
+            else if (plotType.ToLower() == "summary")
+            {
+                return Ok(movie.Summary);
+            }
+            return BadRequest(); //Rätt??
+        }
+
         //Felhantering??
-        [Route("api/movies/{english_title}/{fields}")]
+        [Route("{english_title}/{fields}")]
         public IActionResult GetMovieSpecificFields(string english_title, string fields)
         {
             var movie = _movieRepo.GetMovieByTitle(english_title);
@@ -93,7 +118,7 @@ namespace GhiblipediaAPI.Controllers
         }
 
         [HttpPost]
-        [Route("api/movies/")]
+        [Route("")]
         public IActionResult Post([FromBody] Movie movie)
         {
             _movieRepo.PostMovieInDB(movie);
