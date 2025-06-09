@@ -1,4 +1,5 @@
-﻿using Dapper;
+﻿using AutoMapper;
+using Dapper;
 using GhiblipediaAPI.Models;
 using GhiblipediaAPI.Services;
 using System.Collections.Generic;
@@ -9,10 +10,22 @@ namespace GhiblipediaAPI.Data
     public class MovieRepository : IMovieRepository
     {
         private readonly IDbConnection _db;
+        private readonly IMapper _mapper;
 
-        public MovieRepository(IDbConnection db)
+        public MovieRepository(IDbConnection db, IMapper mapper)
         {
             _db = db;
+            _mapper = mapper;
+        }
+
+        public Movie ConvertMovieDtoToMovie(MovieDto dto)
+        {
+            return _mapper.Map<Movie>(dto);
+        }
+
+        public MovieDto ConvertMovieToMovieDto(Movie movie)
+        {
+            return _mapper.Map<MovieDto>(movie);
         }
 
         //Async??
@@ -20,37 +33,46 @@ namespace GhiblipediaAPI.Data
         {
             string sqlQuery = "SELECT * FROM movies;";
 
-            return _db.Query<Movie>(sqlQuery);
+            var result = _db.Query<MovieDto>(sqlQuery);
+            if (result == null) return null; //Rätt..?
+
+            return result.Select(dto => ConvertMovieDtoToMovie(dto));
         }
 
         public Movie GetMovieById(int id)
         {
             string slqQuery = $"SELECT * FROM movies WHERE movie_id = {id};";
 
-            return _db.QueryFirstOrDefault<Movie>(slqQuery);
+            var result = _db.QueryFirstOrDefault<MovieDto>(slqQuery);
+            if (result == null) return null; //Rätt..?
+
+            return ConvertMovieDtoToMovie(result);
         }
 
-        public Movie GetMovieByTitle(string english_title)
+        public Movie GetMovieByTitle(string englishTitle)
         {
-            string slqQuery = $"SELECT * FROM movies WHERE english_title = '{english_title}';";
+            string slqQuery = $"SELECT * FROM movies WHERE english_title = '{englishTitle}';";
+            
+            var result = _db.QueryFirstOrDefault<MovieDto>(slqQuery);
+            if (result == null) return null; //Rätt..?
 
-            return _db.QueryFirstOrDefault<Movie>(slqQuery);
+            return ConvertMovieDtoToMovie(result);
         }
 
 
 
-
+        //Den här metoden hade kunnat vara bra att unit testa ev.
 
         public void PostMovieInDB(Movie movie)
         {
-            if (movie.Movie_id != null)
+            if (movie.MovieId != null)
             {
-                movie.Movie_id = null; //This field auto-increment by default.
+                movie.MovieId = null; //This field auto-increment by default.
             }
+            var movieDto = ConvertMovieToMovieDto(movie);
+            string sqlQuery = CustomSqlServices.CreateInsertQueryStringFromObject(movieDto, "movies");
 
-            string sqlQuery = CustomSqlServices.CreateInsertQueryStringFromObject(movie, "movies");
-
-            _db.Execute(sqlQuery, movie);
+            _db.Execute(sqlQuery, movieDto);
         }
     }
 }

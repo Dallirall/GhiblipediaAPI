@@ -11,6 +11,7 @@ builder.Services.AddScoped<IDbConnection>(sp =>
 
 //builder.Services.AddScoped<IMovieRepository, MovieRepository>();
 builder.Services.AddTransient<IMovieRepository, MovieRepository>();
+builder.Services.AddAutoMapper(typeof(Program));
 
 builder.Services.AddCors(options =>
 {
