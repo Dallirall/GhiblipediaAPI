@@ -39,7 +39,7 @@ namespace GhiblipediaAPI.Data
             return result.Select(dto => ConvertMovieDtoToMovie(dto));
         }
 
-        public Movie GetMovieById(int id)
+        public Movie GetMovieByID(int id)
         {
             string slqQuery = $"SELECT * FROM movies WHERE movie_id = {id};";
 

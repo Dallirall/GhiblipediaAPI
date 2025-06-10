@@ -6,7 +6,7 @@ namespace GhiblipediaAPI.Data
     {
         IEnumerable<Movie> GetAllMovies();
 
-        Movie GetMovieById(int id);
+        Movie GetMovieByID(int id);
 
         public Movie GetMovieByTitle(string english_title);
 

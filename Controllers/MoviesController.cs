@@ -29,12 +29,12 @@ namespace GhiblipediaAPI.Controllers
             return Ok(movies);
         }
 
-        //api/movies/{movieId} (ex: GET api/movies/1) 
+        //api/movies/{movieID} (ex: GET api/movies/1) 
         [HttpGet]
-        [Route("{movieId:int}")]        
-        public ActionResult<Movie> GetById(int movieId)
+        [Route("{movieID:int}")]        
+        public ActionResult<Movie> GetByID(int movieID)
         {
-            var movie = _movieRepo.GetMovieById(movieId);
+            var movie = _movieRepo.GetMovieByID(movieID);
 
             if (movie == null) return NotFound();
             
