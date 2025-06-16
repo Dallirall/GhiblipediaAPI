@@ -18,6 +18,16 @@ namespace GhiblipediaAPI.Data
             _mapper = mapper;
         }
 
+
+        public object GetTest()
+        {
+            string sqlQuery = "SELECT * FROM test_table;";
+
+            var result = _db.Query(sqlQuery);
+            return result;
+        }
+
+
         public Movie ConvertMovieDtoToMovie(MovieDto dto)
         {
             return _mapper.Map<Movie>(dto);

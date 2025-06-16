@@ -13,5 +13,6 @@
         public string? Director { get; set; }
         public string? Genre { get; set; }
         public int? RunningTimeMins { get; set; }
+        public string[]? Tags { get; set; }
     }
 }

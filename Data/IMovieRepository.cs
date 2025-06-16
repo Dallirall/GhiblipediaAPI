@@ -4,6 +4,7 @@ namespace GhiblipediaAPI.Data
 {
     public interface IMovieRepository
     {
+        object GetTest();
         IEnumerable<Movie> GetAllMovies();
 
         Movie GetMovieByID(int id);

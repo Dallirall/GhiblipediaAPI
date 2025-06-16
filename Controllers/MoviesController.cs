@@ -16,6 +16,18 @@ namespace GhiblipediaAPI.Controllers
             _movieRepo = movieRepo;
         }
 
+
+        [HttpGet]
+        [Route("{testVar}/{moreTest}/{testInt:int}")]
+        public ActionResult GetTestObj(string testVar, string moreTest, int testInt)
+        {
+            var testObj = _movieRepo.GetTest();
+
+            return Ok(testObj);
+        }
+
+
+
         //TODO: Gör det async
 
         //api/movies (ex: GET api/movies)

@@ -1,13 +1,27 @@
-using Microsoft.OpenApi.Models;
-using Microsoft.Data.SqlClient;
-using System.Data;
 using GhiblipediaAPI.Data;
+using Microsoft.Data.SqlClient;
+using Microsoft.OpenApi.Models;
+using Npgsql;
+using System;
+using System.Data;
 using System.Web;
 
 var builder = WebApplication.CreateBuilder(args);
 
+string? connectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING");
+
+if (string.IsNullOrEmpty(connectionString))
+{
+    throw new InvalidOperationException("Environment variable CONNECTION_STRING is not set.");
+}
+
 builder.Services.AddScoped<IDbConnection>(sp =>
-    new SqlConnection(builder.Configuration.GetConnectionString("DefaultConnection")));
+    new NpgsqlConnection(connectionString));
+
+
+//127.0.0.1
+//builder.Services.AddScoped<IDbConnection>(sp =>
+//    new NpgsqlConnection("Server=aws-0-eu-north-1.pooler.supabase.com;Port=6543;Database=postgres;User Id=postgres.wannbtwmxjqfxlqnsbsn;Password=7n1J3IYeq98Kyz2GhZQCCzEYLbJCVwuO;SslMode=Require;Trust Server Certificate=true;"));
 
 //builder.Services.AddScoped<IMovieRepository, MovieRepository>();
 builder.Services.AddTransient<IMovieRepository, MovieRepository>();
