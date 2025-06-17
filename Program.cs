@@ -1,4 +1,5 @@
 using GhiblipediaAPI.Data;
+using GhiblipediaAPI.Services;
 using Microsoft.Data.SqlClient;
 using Microsoft.OpenApi.Models;
 using Npgsql;
@@ -22,6 +23,7 @@ builder.Services.AddScoped<IDbConnection>(sp =>
 
 //builder.Services.AddScoped<IMovieRepository, MovieRepository>();
 builder.Services.AddTransient<IMovieRepository, MovieRepository>();
+//builder.Services.AddKeyedTransient(typeof(OmdbAPIService), typeof(MovieRepository));
 builder.Services.AddAutoMapper(typeof(Program));
 
 builder.Services.AddCors(options =>

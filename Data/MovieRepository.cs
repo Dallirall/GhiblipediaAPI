@@ -11,11 +11,13 @@ namespace GhiblipediaAPI.Data
     {
         private readonly IDbConnection _db;
         private readonly IMapper _mapper;
+        private readonly OmdbAPIService _omdbAPI;
 
         public MovieRepository(IDbConnection db, IMapper mapper)
         {
             _db = db;
             _mapper = mapper;
+            _omdbAPI = new OmdbAPIService();
         }
 
 
@@ -85,6 +87,15 @@ namespace GhiblipediaAPI.Data
             _db.Execute(sqlQuery, movieDto);
         }
 
+        public Movie ConvertOmdbMovieToMovie(string englishTitle)
+        {
+            OmdbMovie omdbMovie = _omdbAPI.GetOmdbMovie(englishTitle);
+
+            Movie movie = _mapper.Map<Movie>(omdbMovie);
+
+            return movie;
+
+        }
         
     }
 }
