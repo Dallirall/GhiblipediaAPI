@@ -19,9 +19,6 @@ builder.Services.AddScoped<IDbConnection>(sp =>
     new NpgsqlConnection(connectionString));
 
 
-//127.0.0.1
-//builder.Services.AddScoped<IDbConnection>(sp =>
-//    new NpgsqlConnection("Server=aws-0-eu-north-1.pooler.supabase.com;Port=6543;Database=postgres;User Id=postgres.wannbtwmxjqfxlqnsbsn;Password=7n1J3IYeq98Kyz2GhZQCCzEYLbJCVwuO;SslMode=Require;Trust Server Certificate=true;"));
 
 //builder.Services.AddScoped<IMovieRepository, MovieRepository>();
 builder.Services.AddTransient<IMovieRepository, MovieRepository>();
