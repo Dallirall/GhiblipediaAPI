@@ -35,6 +35,15 @@ namespace GhiblipediaAPI
                 .ForMember(dest => dest.Running_time_mins, opt => opt.MapFrom(src => src.RunningTimeMins))
                 ;
 
+            CreateMap<OmdbMovie, Movie>()
+                .ForMember(dest => dest.MovieId, opt => opt.MapFrom(src => src.ImdbID))
+                .ForMember(dest => dest.EnglishTitle, opt => opt.MapFrom(src => src.Title))
+                .ForMember(dest => dest.ImageUrl, opt => opt.MapFrom(src => src.Poster))
+                .ForMember(dest => dest.Summary, opt => opt.MapFrom(src => src.Plot))
+                .ForMember(dest => dest.Director, opt => opt.MapFrom(src => src.Director))
+                .ForMember(dest => dest.Genre, opt => opt.MapFrom(src => src.Genre))
+                .ForMember(dest => dest.RunningTimeMins, opt => opt.MapFrom(src => src.Runtime))
+                ;
         }
     }
 }

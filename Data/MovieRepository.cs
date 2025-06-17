@@ -84,5 +84,7 @@ namespace GhiblipediaAPI.Data
 
             _db.Execute(sqlQuery, movieDto);
         }
+
+        
     }
 }
