@@ -1,7 +1,8 @@
 ﻿using GhiblipediaAPI.Data;
 using GhiblipediaAPI.Models;
 using Microsoft.AspNetCore.Mvc;
-using System.Text.Json; //Behövs denna?
+using System.Text.Json;
+using System.Threading.Tasks; //Behövs denna?
 
 namespace GhiblipediaAPI.Controllers
 {
@@ -98,14 +99,13 @@ namespace GhiblipediaAPI.Controllers
 
         [HttpPost]
         [Route("{englishTitle}")]
-        public IActionResult PostMovieInDBWithDataFromOmdb(string englishTitle)
+        public async Task<IActionResult> PostMovieInDBWithDataFromOmdb(string englishTitle)
         {
             if (englishTitle == null) return UnprocessableEntity();
 
             Movie movie = new Movie();
-
-            movie = _movieRepo.ConvertOmdbMovieToMovie(englishTitle);
-
+            movie = await _movieRepo.ConvertOmdbMovieToMovie(englishTitle);            
+            
             _movieRepo.PostMovieInDB(movie);
 
             return CreatedAtAction(nameof(GetAll), movie);

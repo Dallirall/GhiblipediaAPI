@@ -13,7 +13,7 @@ namespace GhiblipediaAPI.Data
 
         void PostMovieInDB(Movie movie);
 
-        Movie ConvertOmdbMovieToMovie(string englishTitle);
+        public Task<Movie> ConvertOmdbMovieToMovie(string englishTitle);
 
 
     }

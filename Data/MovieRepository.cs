@@ -87,15 +87,16 @@ namespace GhiblipediaAPI.Data
             _db.Execute(sqlQuery, movieDto);
         }
 
-        public Movie ConvertOmdbMovieToMovie(string englishTitle)
+        public async Task<Movie> ConvertOmdbMovieToMovie(string englishTitle)
         {
-            OmdbMovie omdbMovie = _omdbAPI.GetOmdbMovie(englishTitle);
+            OmdbMovie omdbMovie = await _omdbAPI.GetOmdbMovie(englishTitle);
 
             Movie movie = _mapper.Map<Movie>(omdbMovie);
 
             return movie;
 
         }
+
         
     }
 }
