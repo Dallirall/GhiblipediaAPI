@@ -15,7 +15,7 @@ namespace GhiblipediaAPI.Services
 
             var movieData = await GetMovieDataAsync(url);
             OmdbMovie movie = JsonConvert.DeserializeObject<OmdbMovie>(movieData.ToString());
-            if (movieData != null)
+            if (movie.Title != null)
             {
                 return movie;
             }

@@ -77,6 +77,11 @@ namespace GhiblipediaAPI.Data
 
         public void PostMovieInDB(Movie movie)
         {
+            if (movie == null)
+            {
+                throw new Exception("Could not find the data to post in database.");
+            }
+
             if (movie.MovieId != null)
             {
                 movie.MovieId = null; //This field auto-increment by default.
@@ -84,7 +89,15 @@ namespace GhiblipediaAPI.Data
             var movieDto = ConvertMovieToMovieDto(movie);
             string sqlQuery = CustomSqlServices.CreateInsertQueryStringFromObject(movieDto, "movies");
 
-            _db.Execute(sqlQuery, movieDto);
+            try
+            {
+                _db.Execute(sqlQuery, movieDto);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex}");
+            }
+            //TODO: Returna något för att indikera om det failade, t.ex. om filmen redan finns i databasen..?
         }
 
         public async Task<Movie> ConvertOmdbMovieToMovie(string englishTitle)
