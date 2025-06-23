@@ -15,6 +15,7 @@ namespace GhiblipediaAPI.Data
 
         public Task<Movie> ConvertOmdbMovieToMovie(string englishTitle);
 
+        public Task<int> UpdateMovieInDB(string englishTitle, Movie MovieDataToUpdate);
 
     }
 }

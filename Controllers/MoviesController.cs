@@ -1,5 +1,6 @@
 ﻿using GhiblipediaAPI.Data;
 using GhiblipediaAPI.Models;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
 using System.Threading.Tasks; //Behövs denna?
@@ -109,6 +110,27 @@ namespace GhiblipediaAPI.Controllers
             _movieRepo.PostMovieInDB(movie);
 
             return CreatedAtAction(nameof(GetAll), movie);
+        }
+
+        [HttpPut]
+        [Route("{englishTitle}")]
+        public async Task<IActionResult> UpdateMovie(string englishTitle, [FromBody] Movie MovieDataToUpdate)
+        {
+            if (MovieDataToUpdate == null) return UnprocessableEntity();
+
+            try
+            {
+                Movie movieToUpdate = _movieRepo.GetMovieByTitle(englishTitle);
+                if (movieToUpdate == null) return BadRequest();
+
+                int rowsUpdatedResponse = await _movieRepo.UpdateMovieInDB(englishTitle, MovieDataToUpdate);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex);
+            }
+
+            return Ok((GetByTitle($"{englishTitle}")));
         }
     }
 }

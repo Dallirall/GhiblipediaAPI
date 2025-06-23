@@ -4,6 +4,8 @@ using GhiblipediaAPI.Models;
 using GhiblipediaAPI.Services;
 using System.Collections.Generic;
 using System.Data;
+using System.Reflection;
+using System.Transactions;
 
 namespace GhiblipediaAPI.Data
 {
@@ -110,6 +112,38 @@ namespace GhiblipediaAPI.Data
 
         }
 
-        
+        public async Task<int> UpdateMovieInDB(string englishTitle, Movie MovieDataToUpdate)
+        {
+            MovieDto movieDto = ConvertMovieToMovieDto(MovieDataToUpdate);
+
+            PropertyInfo[] properties = movieDto.GetType()
+                                            .GetProperties(BindingFlags.Public | BindingFlags.Instance)
+                                            .Where(prop => prop.GetValue(movieDto) != null).ToArray();
+            
+            int rowsUpdated = 0;
+            foreach (var property in properties)
+            {
+                string updateQuery = $"UPDATE movies SET {property.Name.ToLower()} = '@Value' WHERE english_title = '@English_title';";
+
+                var placeHolders = new { Value = property.GetValue(movieDto), English_title = englishTitle };
+                                
+                try
+                {
+                    Console.WriteLine($"Updating column: {property.Name} with value: {placeHolders.Value?.ToString() ?? "NULL"}");
+
+                    rowsUpdated += await _db.ExecuteAsync(updateQuery, placeHolders);
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception(ex.Message);
+                }
+
+                
+            }
+            return rowsUpdated;
+        }
+
+
+
     }
 }
