@@ -76,7 +76,10 @@ else
     Console.WriteLine("PORT environment variable not set, falling back to default 8080.");
 }
 
-app.UseHttpsRedirection();
+if (!app.Environment.IsProduction() || app.Environment.IsDevelopment())
+{
+    app.UseHttpsRedirection();
+}
 
 app.UseCors();
 
