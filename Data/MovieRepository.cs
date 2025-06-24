@@ -123,7 +123,7 @@ namespace GhiblipediaAPI.Data
             int rowsUpdated = 0;
             foreach (var property in properties)
             {
-                string updateQuery = $"UPDATE movies SET {property.Name.ToLower()} = '@Value' WHERE english_title = '@English_title';";
+                string updateQuery = $"UPDATE movies SET {property.Name.ToLower()} = @Value WHERE english_title = @English_title;";
 
                 var placeHolders = new { Value = property.GetValue(movieDto), English_title = englishTitle };
                                 

@@ -64,7 +64,17 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
-
+var port = Environment.GetEnvironmentVariable("PORT");
+if (!string.IsNullOrEmpty(port))
+{
+    app.Urls.Add($"http://*:{port}");
+    Console.WriteLine($"Listening on port: {port}"); 
+}
+else
+{    
+    app.Urls.Add("http://*:8080");
+    Console.WriteLine("PORT environment variable not set, falling back to default 8080.");
+}
 
 app.UseHttpsRedirection();
 
