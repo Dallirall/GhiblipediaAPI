@@ -9,21 +9,8 @@ using System.Web;
 
 var builder = WebApplication.CreateBuilder(args);
 
-string? connectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING");
-
-if (string.IsNullOrEmpty(connectionString))
-{
-    throw new InvalidOperationException("Environment variable CONNECTION_STRING is not set.");
-}
-
-builder.Services.AddScoped<IDbConnection>(sp =>
-    new NpgsqlConnection(connectionString));
-
-
-
-//builder.Services.AddScoped<IMovieRepository, MovieRepository>();
 builder.Services.AddTransient<IMovieRepository, MovieRepository>();
-//builder.Services.AddKeyedTransient(typeof(OmdbAPIService), typeof(MovieRepository));
+
 builder.Services.AddAutoMapper(typeof(Program));
 
 builder.Services.AddCors(options =>
@@ -52,6 +39,15 @@ builder.Services.AddSwaggerGen(options =>
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
+string? connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
+if (string.IsNullOrEmpty(connectionString))
+{
+    throw new InvalidOperationException("Environment variable CONNECTION_STRING is not set.");
+}
+
+builder.Services.AddScoped<IDbConnection>(sp =>
+    new NpgsqlConnection(connectionString));
 
 
 var app = builder.Build();
