@@ -99,7 +99,7 @@ namespace GhiblipediaAPI.Controllers
         }
 
         [HttpPost]
-        [Route("{englishTitle}")]
+        [Route("omdb/{englishTitle}")] //Borde routen göras på annat sätt?
         public async Task<IActionResult> PostMovieInDBWithDataFromOmdb(string englishTitle)
         {
             if (englishTitle == null) return UnprocessableEntity();
