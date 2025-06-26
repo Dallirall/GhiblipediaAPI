@@ -15,11 +15,11 @@ namespace GhiblipediaAPI.Data
         private readonly IMapper _mapper;
         private readonly OmdbAPIService _omdbAPI;
 
-        public MovieRepository(IDbConnection db, IMapper mapper)
+        public MovieRepository(IDbConnection db, IMapper mapper, OmdbAPIService omdbAPI)
         {
             _db = db;
             _mapper = mapper;
-            _omdbAPI = new OmdbAPIService();
+            _omdbAPI = omdbAPI;
         }
 
 

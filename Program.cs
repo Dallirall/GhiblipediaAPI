@@ -1,6 +1,7 @@
 using GhiblipediaAPI.Data;
 using GhiblipediaAPI.Services;
 using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using Npgsql;
 using System;
@@ -8,8 +9,6 @@ using System.Data;
 using System.Web;
 
 var builder = WebApplication.CreateBuilder(args);
-
-builder.Services.AddTransient<IMovieRepository, MovieRepository>();
 
 builder.Services.AddAutoMapper(typeof(Program));
 
@@ -43,12 +42,19 @@ string? connectionString = builder.Configuration.GetConnectionString("DefaultCon
 
 if (string.IsNullOrEmpty(connectionString))
 {
-    throw new InvalidOperationException("Environment variable CONNECTION_STRING is not set.");
+    throw new InvalidOperationException("The connection string is not set.");
 }
 
 builder.Services.AddScoped<IDbConnection>(sp =>
     new NpgsqlConnection(connectionString));
 
+builder.Services.Configure<OmdbAPIOptions>(builder.Configuration.GetSection("OmdbApi"));
+
+builder.Services.AddTransient<OmdbAPIService>();
+
+builder.Services.AddTransient<MovieRepository>(); //Det här borde nog göras på annat sätt.
+
+builder.Services.AddTransient<IMovieRepository, MovieRepository>();
 
 var app = builder.Build();
 

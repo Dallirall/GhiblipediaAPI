@@ -1,4 +1,5 @@
 ﻿using GhiblipediaAPI.Models;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 
 namespace GhiblipediaAPI.Services
@@ -6,12 +7,17 @@ namespace GhiblipediaAPI.Services
     public class OmdbAPIService
     {
         private static readonly HttpClient client = new HttpClient();
+        private readonly string _apiKey;
+
+        public OmdbAPIService(IOptions<OmdbAPIOptions> options)
+        {
+            _apiKey = options.Value.ApiKey
+                ?? throw new InvalidOperationException("API key 'OmdbApi:ApiKey' is not configured.");
+        }
 
         public async Task<OmdbMovie> GetOmdbMovie(string movieTitle)
-        {
-
-            string apiKey = "52bbb87a";
-            string url = $"http://www.omdbapi.com/?apikey={apiKey}&t={movieTitle}"; // Example query
+        {            
+            string url = $"http://www.omdbapi.com/?apikey={_apiKey}&t={movieTitle}";
 
             var movieData = await GetMovieDataAsync(url);
             OmdbMovie movie = JsonConvert.DeserializeObject<OmdbMovie>(movieData.ToString());
