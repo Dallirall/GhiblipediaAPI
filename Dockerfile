@@ -27,4 +27,4 @@ RUN dotnet publish "./GhiblipediaAPI.csproj" -c $BUILD_CONFIGURATION -o /app/pub
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "GhiblipediaAPI.dll"]
+ENTRYPOINT ["dotnet", "practical_cori.dll"]
