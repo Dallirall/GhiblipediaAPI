@@ -57,8 +57,6 @@ builder.Services.Configure<OmdbAPIOptions>(builder.Configuration.GetSection("Omd
 
 builder.Services.AddTransient<OmdbAPIService>();
 
-builder.Services.AddTransient<MovieRepository>(); //Det här borde nog göras på annat sätt.
-
 builder.Services.AddTransient<IMovieRepository, MovieRepository>();
 
 var app = builder.Build();
