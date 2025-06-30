@@ -53,21 +53,21 @@ namespace GhiblipediaAPI.Data
             return result.Select(dto => ConvertMovieDtoToMovie(dto));
         }
 
-        public Movie GetMovieByID(int id)
+        public async Task<Movie> GetMovieByID(int id)
         {
-            string slqQuery = $"SELECT * FROM movies WHERE movie_id = {id};";
+            string sqlQuery = $"SELECT * FROM movies WHERE movie_id = @movie_id;";
 
-            var result = _db.QueryFirstOrDefault<MovieDto>(slqQuery);
+            var result = await _db.QueryFirstOrDefaultAsync<MovieDto>(sqlQuery, new { movie_id = id});
             if (result == null) return null; //Rätt..?
 
             return ConvertMovieDtoToMovie(result);
         }
 
-        public Movie GetMovieByTitle(string englishTitle)
+        public async Task<Movie> GetMovieByTitle(string englishTitle)
         {
-            string slqQuery = $"SELECT * FROM movies WHERE english_title = '{englishTitle}';";
+            string sqlQuery = $"SELECT * FROM movies WHERE english_title = @english_title;";
             
-            var result = _db.QueryFirstOrDefault<MovieDto>(slqQuery);
+            var result = await _db.QueryFirstOrDefaultAsync<MovieDto>(sqlQuery, new {english_title = englishTitle});
             if (result == null) return null; //Rätt..?
 
             return ConvertMovieDtoToMovie(result);
