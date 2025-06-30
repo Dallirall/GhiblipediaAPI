@@ -14,6 +14,7 @@ builder.Configuration
     .SetBasePath(Directory.GetCurrentDirectory())
     .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
     .AddJsonFile("appsettings.Local.json", optional: true, reloadOnChange: true);
+    //.AddEnvironmentVariables();
 
 builder.Services.AddAutoMapper(typeof(Program));
 
@@ -81,10 +82,10 @@ else
     Console.WriteLine("PORT environment variable not set, falling back to default 8080.");
 }
 
-if (!app.Environment.IsProduction() || app.Environment.IsDevelopment())
-{
-    app.UseHttpsRedirection();
-}
+//if (!app.Environment.IsProduction() || app.Environment.IsDevelopment())
+//{
+//    app.UseHttpsRedirection();
+//}
 
 app.UseCors();
 

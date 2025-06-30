@@ -9,6 +9,7 @@ namespace GhiblipediaAPI
         {
             CreateMap<MovieDto, Movie>()
                 .ForMember(dest => dest.MovieId, opt => opt.MapFrom(src => src.Movie_id))
+                .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => src.Created_at))
                 .ForMember(dest => dest.EnglishTitle, opt => opt.MapFrom(src => src.English_title))
                 .ForMember(dest => dest.JapaneseTitle, opt => opt.MapFrom(src => src.Japanese_title))
                 .ForMember(dest => dest.ReleaseDate, opt => opt.MapFrom(src => src.Release_date))
@@ -23,6 +24,7 @@ namespace GhiblipediaAPI
 
             CreateMap<Movie, MovieDto>()
                 .ForMember(dest => dest.Movie_id, opt => opt.MapFrom(src => src.MovieId))
+                .ForMember(dest => dest.Created_at, opt => opt.MapFrom(src => src.CreatedAt))
                 .ForMember(dest => dest.English_title, opt => opt.MapFrom(src => src.EnglishTitle))
                 .ForMember(dest => dest.Japanese_title, opt => opt.MapFrom(src => src.JapaneseTitle))
                 .ForMember(dest => dest.Release_date, opt => opt.MapFrom(src => src.ReleaseDate))
