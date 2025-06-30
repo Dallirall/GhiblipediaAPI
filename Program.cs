@@ -22,7 +22,7 @@ builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
     {
-        policy.WithOrigins("http://localhost:5173") // Frontend URL
+        policy.WithOrigins("http://localhost:5173", "https://ghiblipedia.onrender.com") // Frontend URL
               .AllowAnyHeader()
               .AllowAnyMethod();
     });
@@ -82,10 +82,10 @@ else
     Console.WriteLine("PORT environment variable not set, falling back to default 8080.");
 }
 
-//if (!app.Environment.IsProduction() || app.Environment.IsDevelopment())
-//{
-//    app.UseHttpsRedirection();
-//}
+if (!app.Environment.IsProduction() || app.Environment.IsDevelopment())
+{
+    app.UseHttpsRedirection();
+}
 
 app.UseCors();
 

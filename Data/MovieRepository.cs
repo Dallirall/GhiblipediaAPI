@@ -112,9 +112,9 @@ namespace GhiblipediaAPI.Data
 
         }
 
-        public async Task<int> UpdateMovieInDB(string englishTitle, Movie MovieDataToUpdate)
+        public async Task<int> UpdateMovieInDB(string englishTitle, Movie MovieNewData)
         {
-            MovieDto movieDto = ConvertMovieToMovieDto(MovieDataToUpdate);
+            MovieDto movieDto = ConvertMovieToMovieDto(MovieNewData);
 
             PropertyInfo[] properties = movieDto.GetType()
                                             .GetProperties(BindingFlags.Public | BindingFlags.Instance)
