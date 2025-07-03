@@ -48,11 +48,19 @@ namespace GhiblipediaAPI.Controllers
         [Route("{movieID:int}")]        
         public async Task<ActionResult<Movie>> GetByID(int movieID)
         {
-            var movie = await _movieRepo.GetMovieByID(movieID);
+            try
+            {
+                var movie = await _movieRepo.GetMovieByID(movieID);
 
-            if (movie == null) return NotFound();
-            
-            return Ok(movie);
+                if (movie == null) return NotFound();
+
+                return Ok(movie);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Controller caught: " + ex.ToString());
+                return StatusCode(500, "Internal server error");
+            }
         }
 
         //api/movies/{englishTitle} (ex: GET api/movies/spirited%20away)
@@ -60,11 +68,19 @@ namespace GhiblipediaAPI.Controllers
         [Route("{englishTitle}")]        
         public async Task<ActionResult<Movie>> GetByTitle(string englishTitle)
         {
-            var movie = await _movieRepo.GetMovieByTitle(englishTitle);
+            try
+            {
+                var movie = await _movieRepo.GetMovieByTitle(englishTitle);
 
-            if (movie == null) return NotFound();
+                if (movie == null) return NotFound();
 
-            return Ok(movie);
+                return Ok(movie);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Controller caught: " + ex.ToString());
+                return StatusCode(500, "Internal server error");
+            }
         }
 
 

@@ -7,9 +7,9 @@ WORKDIR /app
 EXPOSE 8080
 EXPOSE 8081
 
-USER root
-RUN apt-get update && apt-get install -y ca-certificates && rm -rf /var/lib/apt/lists/*
-USER $APP_UID
+#USER root
+#RUN apt-get update && apt-get install -y ca-certificates && rm -rf /var/lib/apt/lists/*
+#USER $APP_UID
 # This stage is used to build the service project
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 ARG BUILD_CONFIGURATION=Release
@@ -29,4 +29,4 @@ RUN dotnet publish "./GhiblipediaAPI.csproj" -c $BUILD_CONFIGURATION -o /app/pub
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "practical_cori.dll"]
+ENTRYPOINT ["dotnet", "GhiblipediaAPI.dll"]
