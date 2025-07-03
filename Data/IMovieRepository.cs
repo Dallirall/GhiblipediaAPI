@@ -7,9 +7,9 @@ namespace GhiblipediaAPI.Data
         object GetTest();
         IEnumerable<Movie> GetAllMovies();
 
-        Movie GetMovieByID(int id);
+        public Task<Movie> GetMovieByID(int id);
 
-        public Movie GetMovieByTitle(string english_title);
+        public Task<Movie> GetMovieByTitle(string english_title);
 
         void PostMovieInDB(Movie movie);
 

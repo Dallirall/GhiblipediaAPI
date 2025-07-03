@@ -53,24 +53,42 @@ namespace GhiblipediaAPI.Data
             return result.Select(dto => ConvertMovieDtoToMovie(dto));
         }
 
-        public Movie GetMovieByID(int id)
+        public async Task<Movie> GetMovieByID(int id)
         {
-            string slqQuery = $"SELECT * FROM movies WHERE movie_id = {id};";
+            string sqlQuery = $"SELECT * FROM movies WHERE movie_id = @movie_id;";
 
-            var result = _db.QueryFirstOrDefault<MovieDto>(slqQuery);
-            if (result == null) return null; //Rätt..?
+            try
+            {
+                var result = await _db.QueryFirstOrDefaultAsync<MovieDto>(sqlQuery, new { movie_id = id });
+                if (result == null) return null; //Rätt..?
 
-            return ConvertMovieDtoToMovie(result);
+                return ConvertMovieDtoToMovie(result);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Detailed error: " + ex.ToString());
+                throw;
+            }
+
         }
 
-        public Movie GetMovieByTitle(string englishTitle)
+        public async Task<Movie> GetMovieByTitle(string englishTitle)
         {
-            string slqQuery = $"SELECT * FROM movies WHERE english_title = '{englishTitle}';";
-            
-            var result = _db.QueryFirstOrDefault<MovieDto>(slqQuery);
-            if (result == null) return null; //Rätt..?
+            string sqlQuery = $"SELECT * FROM movies WHERE english_title = @english_title;";
 
-            return ConvertMovieDtoToMovie(result);
+
+            try
+            {
+                var result = await _db.QueryFirstOrDefaultAsync<MovieDto>(sqlQuery, new { english_title = englishTitle });
+                if (result == null) return null; //Rätt..?
+
+                return ConvertMovieDtoToMovie(result);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Detailed error: " + ex.ToString());
+                throw;
+            }
         }
 
 

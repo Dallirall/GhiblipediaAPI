@@ -46,34 +46,50 @@ namespace GhiblipediaAPI.Controllers
         //api/movies/{movieID} (ex: GET api/movies/1) 
         [HttpGet]
         [Route("{movieID:int}")]        
-        public ActionResult<Movie> GetByID(int movieID)
+        public async Task<ActionResult<Movie>> GetByID(int movieID)
         {
-            var movie = _movieRepo.GetMovieByID(movieID);
+            try
+            {
+                var movie = await _movieRepo.GetMovieByID(movieID);
 
-            if (movie == null) return NotFound();
-            
-            return Ok(movie);
+                if (movie == null) return NotFound();
+
+                return Ok(movie);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Controller caught: " + ex.ToString());
+                return StatusCode(500, "Internal server error");
+            }
         }
 
         //api/movies/{englishTitle} (ex: GET api/movies/spirited%20away)
         [HttpGet]
         [Route("{englishTitle}")]        
-        public ActionResult<Movie> GetByTitle(string englishTitle)
+        public async Task<ActionResult<Movie>> GetByTitle(string englishTitle)
         {
-            var movie = _movieRepo.GetMovieByTitle(englishTitle);
+            try
+            {
+                var movie = await _movieRepo.GetMovieByTitle(englishTitle);
 
-            if (movie == null) return NotFound();
+                if (movie == null) return NotFound();
 
-            return Ok(movie);
+                return Ok(movie);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Controller caught: " + ex.ToString());
+                return StatusCode(500, "Internal server error");
+            }
         }
 
 
         //api/movies/{englishTitle}/fullplot || api/movies/{englishTitle}/summary (ex: GET api/movies/spirited%20away/fullplot)
         [HttpGet]
         [Route("{englishTitle}/{plotType}")]
-        public ActionResult<Movie> GetFullPlotOrSummary(string englishTitle, string plotType)
+        public async Task<ActionResult<Movie>> GetFullPlotOrSummary(string englishTitle, string plotType)
         {
-            var movie = _movieRepo.GetMovieByTitle(englishTitle);
+            var movie = await _movieRepo.GetMovieByTitle(englishTitle);
 
             if (movie == null) return NotFound();
 
@@ -112,26 +128,26 @@ namespace GhiblipediaAPI.Controllers
             return CreatedAtAction(nameof(GetAll), movie);
         }
 
-        [HttpPut]
-        [Route("{englishTitle}")]
-        public async Task<IActionResult> UpdateMovie(string englishTitle, [FromBody] Movie MovieDataToUpdate)
-        {
-            if (MovieDataToUpdate == null) return UnprocessableEntity();
+        //[HttpPut]
+        //[Route("{englishTitle}")]
+        //public async Task<IActionResult> UpdateMovie(string englishTitle, [FromBody] Movie MovieNewData)
+        //{
+        //    if (MovieNewData == null) return UnprocessableEntity();
 
-            try
-            {
-                Movie movieToUpdate = _movieRepo.GetMovieByTitle(englishTitle);
-                if (movieToUpdate == null) return BadRequest();
+        //    try
+        //    {
+        //        Movie movieToUpdate = _movieRepo.GetMovieByTitle(englishTitle);
+        //        if (movieToUpdate == null) return BadRequest();
 
-                int rowsUpdatedResponse = await _movieRepo.UpdateMovieInDB(englishTitle, MovieDataToUpdate);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex);
-            }
+        //        int rowsUpdatedResponse = await _movieRepo.UpdateMovieInDB(englishTitle, MovieNewData);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return StatusCode(500, ex);
+        //    }
 
-            return Ok((GetByTitle($"{englishTitle}")));
-        }
+        //    return Ok((GetByTitle($"{englishTitle}")));
+        //}
     }
 }
 //[ProducesResponseType<T>(StatusCodes.Status200OK)]

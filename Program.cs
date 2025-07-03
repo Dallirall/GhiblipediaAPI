@@ -6,6 +6,8 @@ using Microsoft.OpenApi.Models;
 using Npgsql;
 using System;
 using System.Data;
+using System.Net;
+using System.Net.Sockets;
 using System.Web;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -27,6 +29,12 @@ builder.Services.AddCors(options =>
               .AllowAnyMethod();
     });
 });
+
+builder.Configuration
+    .SetBasePath(Directory.GetCurrentDirectory())
+    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+    .AddJsonFile("appsettings.Local.json", optional: true, reloadOnChange: true)
+    .AddEnvironmentVariables();
 
 // Add services to the container.
 builder.Services.AddControllers();
@@ -77,7 +85,7 @@ if (!string.IsNullOrEmpty(port))
     Console.WriteLine($"Listening on port: {port}"); 
 }
 else
-{    
+{   
     app.Urls.Add("http://*:8080");
     Console.WriteLine("PORT environment variable not set, falling back to default 8080.");
 }
@@ -93,4 +101,18 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-app.Run();
+try
+{
+    app.Run();
+}
+catch (IOException ex)
+{
+    var udp = new UdpClient(0, AddressFamily.InterNetwork);
+    int unusedPort = ((IPEndPoint)udp.Client.LocalEndPoint).Port;
+    app.Urls.Add($"http://*:{unusedPort.ToString()}");
+}
+finally
+{
+    app.Run();
+}
+
