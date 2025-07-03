@@ -101,18 +101,6 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-try
-{
-    app.Run();
-}
-catch (IOException ex)
-{
-    var udp = new UdpClient(0, AddressFamily.InterNetwork);
-    int unusedPort = ((IPEndPoint)udp.Client.LocalEndPoint).Port;
-    app.Urls.Add($"http://*:{unusedPort.ToString()}");
-}
-finally
-{
-    app.Run();
-}
+app.Run();
+
 
