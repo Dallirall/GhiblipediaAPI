@@ -12,13 +12,19 @@ using System.Web;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Configuration
+    .SetBasePath(Directory.GetCurrentDirectory())
+    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+    .AddJsonFile("appsettings.Local.json", optional: true, reloadOnChange: true);
+    //.AddEnvironmentVariables();
+
 builder.Services.AddAutoMapper(typeof(Program));
 
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
     {
-        policy.WithOrigins("http://localhost:5173") // Frontend URL
+        policy.WithOrigins("http://localhost:5173", "https://ghiblipedia.onrender.com") // Frontend URL
               .AllowAnyHeader()
               .AllowAnyMethod();
     });
@@ -59,8 +65,6 @@ builder.Services.AddScoped<IDbConnection>(sp =>
 builder.Services.Configure<OmdbAPIOptions>(builder.Configuration.GetSection("OmdbApi"));
 
 builder.Services.AddTransient<OmdbAPIService>();
-
-builder.Services.AddTransient<MovieRepository>(); //Det här borde nog göras på annat sätt.
 
 builder.Services.AddTransient<IMovieRepository, MovieRepository>();
 
