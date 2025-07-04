@@ -95,29 +95,46 @@ namespace GhiblipediaAPI.Data
 
         //Den här metoden hade kunnat vara bra att unit testa ev.
 
-        public void PostMovieInDB(Movie movie)
+        public async Task<bool> PostMovieInDB(Movie movie)
         {
+            bool isSuccess = false;
             if (movie == null)
             {
-                throw new Exception("Could not find the data to post in database.");
+                Console.WriteLine("Could not find the data to post in database.");
+                return isSuccess;
             }
 
             if (movie.MovieId != null)
             {
                 movie.MovieId = null; //This field auto-increment by default.
             }
+            if (movie.CreatedAt != null)
+            {
+                movie.CreatedAt = null; //This field will be timestamped in database automatically.
+            }
             var movieDto = ConvertMovieToMovieDto(movie);
+
+            var existingMovie = await GetMovieByTitle(movieDto.English_title);
+
+            if (existingMovie != null)
+            {
+                Console.WriteLine($"The movie '{movieDto.English_title}' already exists in database. ");
+                return isSuccess;
+            }
+
             string sqlQuery = CustomSqlServices.CreateInsertQueryStringFromObject(movieDto, "movies");
 
             try
             {
-                _db.Execute(sqlQuery, movieDto);
+                Console.WriteLine("Inserting into database... ");
+                await _db.ExecuteAsync(sqlQuery, movieDto);
+                isSuccess = true;
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error: {ex}");
+                Console.WriteLine($"Error: {ex}");                
             }
-            //TODO: Returna något för att indikera om det failade, t.ex. om filmen redan finns i databasen..?
+            return isSuccess; //Testa
         }
 
         public async Task<Movie> ConvertOmdbMovieToMovie(string englishTitle)
@@ -132,36 +149,41 @@ namespace GhiblipediaAPI.Data
 
         public async Task<int> UpdateMovieInDB(string englishTitle, Movie MovieNewData)
         {
-            MovieDto movieDto = ConvertMovieToMovieDto(MovieNewData);
+            MovieDto movieDtoNewData = ConvertMovieToMovieDto(MovieNewData);
 
-            PropertyInfo[] properties = movieDto.GetType()
+            PropertyInfo[] properties = movieDtoNewData.GetType()
                                             .GetProperties(BindingFlags.Public | BindingFlags.Instance)
-                                            .Where(prop => prop.GetValue(movieDto) != null).ToArray();
+                                            .Where(prop => prop.GetValue(movieDtoNewData) != null).ToArray();
             
             int rowsUpdated = 0;
             foreach (var property in properties)
             {
-                string updateQuery = $"UPDATE movies SET {property.Name.ToLower()} = @Value WHERE english_title = @English_title;";
+                string updateQuery = $"UPDATE movies SET @Column = @Value WHERE english_title = @English_title;";
 
-                var placeHolders = new { Value = property.GetValue(movieDto), English_title = englishTitle };
+                var placeHolders = new { Value = property.GetValue(movieDtoNewData), English_title = englishTitle, Column = property.Name.ToLower() };
                                 
                 try
                 {
-                    Console.WriteLine($"Updating column: {property.Name} with value: {placeHolders.Value?.ToString() ?? "NULL"}");
+                    Console.WriteLine($"Updating column: {property.Name.ToLower()} with value: {placeHolders.Value?.ToString() ?? "NULL"}");
 
                     rowsUpdated += await _db.ExecuteAsync(updateQuery, placeHolders);
+
+                    Console.WriteLine("Currently updated rows: " + rowsUpdated);
                 }
                 catch (Exception ex)
-                {
-                    throw new Exception(ex.Message);
+                {                    
+                    Console.WriteLine($"Could not update column {property.Name.ToLower()}. Exception: {ex.Message}");
                 }
-
-                
+                                
             }
             return rowsUpdated;
         }
 
-
+        public async Task UpdateMovie(Movie movieToUpdate)
+        {
+            int rowsUpdated = 0;
+            rowsUpdated = await _db.ExecuteAsync("");
+        }
 
     }
 }

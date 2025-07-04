@@ -1,6 +1,7 @@
 ﻿using GhiblipediaAPI.Data;
 using GhiblipediaAPI.Models;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
 using System.Threading.Tasks; //Behövs denna?
@@ -128,26 +129,51 @@ namespace GhiblipediaAPI.Controllers
             return CreatedAtAction(nameof(GetAll), movie);
         }
 
-        //[HttpPut]
-        //[Route("{englishTitle}")]
-        //public async Task<IActionResult> UpdateMovie(string englishTitle, [FromBody] Movie MovieNewData)
-        //{
-        //    if (MovieNewData == null) return UnprocessableEntity();
+        [HttpPut]
+        [Route("{englishTitle}")]
+        public async Task<IActionResult> UpdateMovie(string englishTitle, [FromBody] Movie MovieNewData)
+        {
+            if (MovieNewData == null) return UnprocessableEntity();
 
-        //    try
-        //    {
-        //        Movie movieToUpdate = _movieRepo.GetMovieByTitle(englishTitle);
-        //        if (movieToUpdate == null) return BadRequest();
+            try
+            {
+                Movie movieToUpdate = await _movieRepo.GetMovieByTitle(englishTitle);
+                if (movieToUpdate == null)
+                {
+                    Console.WriteLine($"The movie {englishTitle} does not yet exist in database. ");
+                    return BadRequest();
+                }
 
-        //        int rowsUpdatedResponse = await _movieRepo.UpdateMovieInDB(englishTitle, MovieNewData);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return StatusCode(500, ex);
-        //    }
+                int rowsUpdatedResponse = await _movieRepo.UpdateMovieInDB(englishTitle, MovieNewData);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex);
+            }
 
-        //    return Ok((GetByTitle($"{englishTitle}")));
-        //}
+            return Ok((GetByTitle($"{englishTitle}")));
+        }
+
+        [HttpPatch]
+        [Route("{englishTitle}")]
+        public async Task<IActionResult> PatchMovie(string englishTitle, [FromBody] JsonPatchDocument<Movie> patchDoc)
+        {
+            if (patchDoc == null)
+                return BadRequest();
+            
+
+            var movieToUpdate = await _movieRepo.GetMovieByTitle(englishTitle);
+            if (movieToUpdate == null)
+                return NotFound();
+
+            //Kolla vadfan ModelState är...
+            patchDoc.ApplyTo(movieToUpdate, ModelState);
+
+            await _movieRepo.UpdateMovie(movieToUpdate);
+            return Ok(movieToUpdate);
+
+        }
+
     }
 }
 //[ProducesResponseType<T>(StatusCodes.Status200OK)]

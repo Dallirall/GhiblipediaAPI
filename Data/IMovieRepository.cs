@@ -11,11 +11,13 @@ namespace GhiblipediaAPI.Data
 
         public Task<Movie> GetMovieByTitle(string english_title);
 
-        void PostMovieInDB(Movie movie);
+        public Task<bool> PostMovieInDB(Movie movie);
 
         public Task<Movie> ConvertOmdbMovieToMovie(string englishTitle);
 
-        public Task<int> UpdateMovieInDB(string englishTitle, Movie MovieDataToUpdate);
+        public Task<int> UpdateMovieInDB(string englishTitle, Movie MovieDataToUpdate);//Ändra denna?
+
+        public Task UpdateMovie(Movie movie);
 
     }
 }
