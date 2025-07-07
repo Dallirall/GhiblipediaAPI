@@ -181,8 +181,10 @@ namespace GhiblipediaAPI.Data
 
         public async Task UpdateMovie(Movie movieToUpdate)
         {
+            string replaceQuery = "REPLACE INTO movies VALUES @Values;";
+
             int rowsUpdated = 0;
-            rowsUpdated = await _db.ExecuteAsync("");
+            rowsUpdated = await _db.ExecuteAsync(replaceQuery, movieToUpdate);
         }
 
     }

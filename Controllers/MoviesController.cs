@@ -107,10 +107,15 @@ namespace GhiblipediaAPI.Controllers
 
         [HttpPost]
         [Route("")]
-        public IActionResult PostMovie([FromBody] Movie movie)
+        public async Task<IActionResult> PostMovie([FromBody] Movie movie)
         {
             if (movie == null) return UnprocessableEntity(); //Korrekt??
-            _movieRepo.PostMovieInDB(movie);          
+            bool isSuccess = await _movieRepo.PostMovieInDB(movie);
+            
+            if (!isSuccess)
+            {
+                return StatusCode(500, "Internal server error");
+            }
 
             return CreatedAtAction(nameof(GetAll), movie);
         }
@@ -122,9 +127,14 @@ namespace GhiblipediaAPI.Controllers
             if (englishTitle == null) return UnprocessableEntity();
 
             Movie movie = new Movie();
-            movie = await _movieRepo.ConvertOmdbMovieToMovie(englishTitle);            
-            
-            _movieRepo.PostMovieInDB(movie);
+            movie = await _movieRepo.ConvertOmdbMovieToMovie(englishTitle);
+
+            bool isSuccess = await _movieRepo.PostMovieInDB(movie);
+
+            if (!isSuccess)
+            {
+                return StatusCode(500, "Internal server error");
+            }
 
             return CreatedAtAction(nameof(GetAll), movie);
         }
