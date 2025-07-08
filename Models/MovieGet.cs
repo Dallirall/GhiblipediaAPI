@@ -1,6 +1,6 @@
 ﻿namespace GhiblipediaAPI.Models
 {
-    public class Movie
+    public class MovieGet
     {
         public int? MovieId { get; set; }
         public DateTime? CreatedAt { get; set; }

@@ -1,6 +1,6 @@
 ﻿namespace GhiblipediaAPI.Models
 {
-    public class MovieWriteCreate
+    public class MoviePostPut
     {        
         public string? EnglishTitle { get; set; }
         public string? JapaneseTitle { get; set; }

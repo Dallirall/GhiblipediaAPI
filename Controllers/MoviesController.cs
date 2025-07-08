@@ -19,26 +19,12 @@ namespace GhiblipediaAPI.Controllers
             _movieRepo = movieRepo;
         }
 
-
-        [HttpGet]
-        [Route("{testVar}/{moreTest}/{testInt:int}")]
-        public ActionResult GetTestObj(string testVar, string moreTest, int testInt)
-        {
-            var testObj = _movieRepo.GetTest();
-
-            return Ok(testObj);
-        }
-
-
-
-        //TODO: Gör det async
-
         //api/movies (ex: GET api/movies)
         [HttpGet]
         [Route("")]
-        public ActionResult<IEnumerable<Movie>> GetAll()
+        public async Task<ActionResult<IEnumerable<MovieGet>>> GetAll()
         {
-            var movies = _movieRepo.GetAllMovies();
+            var movies = await _movieRepo.GetAllMovies();
             if (movies == null) return NotFound();
 
             return Ok(movies);
@@ -47,7 +33,7 @@ namespace GhiblipediaAPI.Controllers
         //api/movies/{movieID} (ex: GET api/movies/1) 
         [HttpGet]
         [Route("{movieID:int}")]        
-        public async Task<ActionResult<Movie>> GetByID(int movieID)
+        public async Task<ActionResult<MovieGet>> GetByID(int movieID)
         {
             try
             {
@@ -67,7 +53,7 @@ namespace GhiblipediaAPI.Controllers
         //api/movies/{englishTitle} (ex: GET api/movies/spirited%20away)
         [HttpGet]
         [Route("{englishTitle}")]        
-        public async Task<ActionResult<Movie>> GetByTitle(string englishTitle)
+        public async Task<ActionResult<MovieGet>> GetByTitle(string englishTitle)
         {
             try
             {
@@ -88,7 +74,7 @@ namespace GhiblipediaAPI.Controllers
         //api/movies/{englishTitle}/fullplot || api/movies/{englishTitle}/summary (ex: GET api/movies/spirited%20away/fullplot)
         [HttpGet]
         [Route("{englishTitle}/{plotType}")]
-        public async Task<ActionResult<Movie>> GetFullPlotOrSummary(string englishTitle, string plotType)
+        public async Task<ActionResult<MovieGet>> GetFullPlotOrSummary(string englishTitle, string plotType)
         {
             var movie = await _movieRepo.GetMovieByTitle(englishTitle);
 
@@ -102,14 +88,14 @@ namespace GhiblipediaAPI.Controllers
             {
                 return Ok(movie.Summary);
             }
-            return BadRequest(); //Rätt??
+            return BadRequest(); 
         }
 
         [HttpPost]
         [Route("")]
-        public async Task<IActionResult> PostMovie([FromBody] Movie movie)
+        public async Task<IActionResult> PostMovie([FromBody] MoviePostPut movie)
         {
-            if (movie == null) return UnprocessableEntity(); //Korrekt??
+            if (movie == null) return UnprocessableEntity(); 
             bool isSuccess = await _movieRepo.PostMovieInDB(movie);
             
             if (!isSuccess)
@@ -126,8 +112,8 @@ namespace GhiblipediaAPI.Controllers
         {
             if (englishTitle == null) return UnprocessableEntity();
 
-            Movie movie = new Movie();
-            movie = await _movieRepo.ConvertOmdbMovieToMovie(englishTitle);
+            MoviePostPut movie = new MoviePostPut();
+            movie = await _movieRepo.ConvertOmdbMovieToMoviePost(englishTitle);
 
             bool isSuccess = await _movieRepo.PostMovieInDB(movie);
 
@@ -141,13 +127,13 @@ namespace GhiblipediaAPI.Controllers
 
         [HttpPut]
         [Route("{englishTitle}")]
-        public async Task<IActionResult> UpdateMovie(string englishTitle, [FromBody] Movie MovieNewData)
+        public async Task<IActionResult> UpdateMovie(string englishTitle, [FromBody] MoviePostPut MovieNewData)
         {
             if (MovieNewData == null) return UnprocessableEntity();
 
             try
             {
-                Movie movieToUpdate = await _movieRepo.GetMovieByTitle(englishTitle);
+                MovieGet movieToUpdate = await _movieRepo.GetMovieByTitle(englishTitle);
                 if (movieToUpdate == null)
                 {
                     Console.WriteLine($"The movie {englishTitle} does not yet exist in database. ");
@@ -164,25 +150,25 @@ namespace GhiblipediaAPI.Controllers
             return Ok((GetByTitle($"{englishTitle}")));
         }
 
-        [HttpPatch]
-        [Route("{englishTitle}")]
-        public async Task<IActionResult> PatchMovie(string englishTitle, [FromBody] JsonPatchDocument<Movie> patchDoc)
-        {
-            if (patchDoc == null)
-                return BadRequest();
+        //[HttpPatch]
+        //[Route("{englishTitle}")]
+        //public async Task<IActionResult> PatchMovie(string englishTitle, [FromBody] JsonPatchDocument<MovieGet> patchDoc)
+        //{
+        //    if (patchDoc == null)
+        //        return BadRequest();
             
 
-            var movieToUpdate = await _movieRepo.GetMovieByTitle(englishTitle);
-            if (movieToUpdate == null)
-                return NotFound();
+        //    var movieToUpdate = await _movieRepo.GetMovieByTitle(englishTitle);
+        //    if (movieToUpdate == null)
+        //        return NotFound();
 
-            //Kolla vadfan ModelState är...
-            patchDoc.ApplyTo(movieToUpdate, ModelState);
+        //    //Kolla vadfan ModelState är...
+        //    patchDoc.ApplyTo(movieToUpdate, ModelState);
 
-            await _movieRepo.UpdateMovie(movieToUpdate);
-            return Ok(movieToUpdate);
+        //    await _movieRepo.UpdateMovie(movieToUpdate);
+        //    return Ok(movieToUpdate);
 
-        }
+        //}
 
     }
 }

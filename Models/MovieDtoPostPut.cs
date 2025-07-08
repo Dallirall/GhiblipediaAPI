@@ -1,9 +1,7 @@
 ﻿namespace GhiblipediaAPI.Models
 {
-    public class MovieDtoReadOnly
-    {
-        public int? Movie_id { get; set; } 
-        public DateTime? Created_at { get; set; }
+    public class MovieDtoPostPut
+    {        
         public string? English_title { get; set; }
         public string? Japanese_title { get; set; }
         public string? Release_date { get; set; }

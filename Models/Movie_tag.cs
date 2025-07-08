@@ -7,7 +7,7 @@ namespace GhiblipediaAPI.Models
     {
         [ForeignKey("Movie")]
         public int Movie_id { get; set; }
-        public Movie Movie { get; set; }
+        public MovieGet Movie { get; set; }
 
         [ForeignKey("Tag")]
         public int Tag_id { get; set; }

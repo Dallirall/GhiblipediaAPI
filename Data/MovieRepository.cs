@@ -22,47 +22,46 @@ namespace GhiblipediaAPI.Data
             _omdbAPI = omdbAPI;
         }
 
-
-        public object GetTest()
+        public MovieGet ConvertMovieDtoToMovieGet(MovieDtoGet dto)
         {
-            string sqlQuery = "SELECT * FROM test_table;";
-
-            var result = _db.Query(sqlQuery);
-            return result;
+            return _mapper.Map<MovieGet>(dto);
         }
 
-
-        public Movie ConvertMovieDtoToMovie(MovieDtoReadOnly dto)
+        public MovieDtoGet ConvertMovieGetToMovieDto(MovieGet movie)
         {
-            return _mapper.Map<Movie>(dto);
+            return _mapper.Map<MovieDtoGet>(movie);
         }
 
-        public MovieDtoReadOnly ConvertMovieToMovieDto(Movie movie)
+        public MoviePostPut ConvertMovieDtoPostToMoviePost(MovieDtoPostPut dto)
         {
-            return _mapper.Map<MovieDtoReadOnly>(movie);
+            return _mapper.Map<MoviePostPut>(dto);
         }
 
-        //Async??
-        public IEnumerable<Movie> GetAllMovies()
+        public MovieDtoPostPut ConvertMoviePostToMovieDtoPost(MoviePostPut dto)
+        {
+            return _mapper.Map<MovieDtoPostPut>(dto);
+        }
+
+        public async Task<IEnumerable<MovieGet>> GetAllMovies()
         {
             string sqlQuery = "SELECT * FROM movies;";
 
-            var result = _db.Query<MovieDtoReadOnly>(sqlQuery);
-            if (result == null) return null; //Rätt..?
+            var result = await _db.QueryAsync<MovieDtoGet>(sqlQuery);
+            if (result == null) return null;
 
-            return result.Select(dto => ConvertMovieDtoToMovie(dto));
+            return result.Select(dto => ConvertMovieDtoToMovieGet(dto));
         }
 
-        public async Task<Movie> GetMovieByID(int id)
+        public async Task<MovieGet> GetMovieByID(int id)
         {
             string sqlQuery = $"SELECT * FROM movies WHERE movie_id = @movie_id;";
 
             try
             {
-                var result = await _db.QueryFirstOrDefaultAsync<MovieDtoReadOnly>(sqlQuery, new { movie_id = id });
-                if (result == null) return null; //Rätt..?
+                var result = await _db.QueryFirstOrDefaultAsync<MovieDtoGet>(sqlQuery, new { movie_id = id });
+                if (result == null) return null;
 
-                return ConvertMovieDtoToMovie(result);
+                return ConvertMovieDtoToMovieGet(result);
             }
             catch (Exception ex)
             {
@@ -72,17 +71,17 @@ namespace GhiblipediaAPI.Data
 
         }
 
-        public async Task<Movie> GetMovieByTitle(string englishTitle)
+        public async Task<MovieGet> GetMovieByTitle(string englishTitle)
         {
             string sqlQuery = $"SELECT * FROM movies WHERE english_title = @english_title;";
 
 
             try
             {
-                var result = await _db.QueryFirstOrDefaultAsync<MovieDtoReadOnly>(sqlQuery, new { english_title = englishTitle });
-                if (result == null) return null; //Rätt..?
+                var result = await _db.QueryFirstOrDefaultAsync<MovieDtoGet>(sqlQuery, new { english_title = englishTitle });
+                if (result == null) return null;
 
-                return ConvertMovieDtoToMovie(result);
+                return ConvertMovieDtoToMovieGet(result);
             }
             catch (Exception ex)
             {
@@ -95,7 +94,7 @@ namespace GhiblipediaAPI.Data
 
         //Den här metoden hade kunnat vara bra att unit testa ev.
 
-        public async Task<bool> PostMovieInDB(Movie movie)
+        public async Task<bool> PostMovieInDB(MoviePostPut movie)
         {
             bool isSuccess = false;
             if (movie == null)
@@ -103,31 +102,23 @@ namespace GhiblipediaAPI.Data
                 Console.WriteLine("Could not find the data to post in database.");
                 return isSuccess;
             }
+            
+            var movieDtoPost = ConvertMoviePostToMovieDtoPost(movie);
 
-            if (movie.MovieId != null)
-            {
-                movie.MovieId = null; //This field auto-increment by default.
-            }
-            if (movie.CreatedAt != null)
-            {
-                movie.CreatedAt = null; //This field will be timestamped in database automatically.
-            }
-            var movieDto = ConvertMovieToMovieDto(movie);
-
-            var existingMovie = await GetMovieByTitle(movieDto.English_title);
+            var existingMovie = await GetMovieByTitle(movieDtoPost.English_title);
 
             if (existingMovie != null)
             {
-                Console.WriteLine($"The movie '{movieDto.English_title}' already exists in database. ");
+                Console.WriteLine($"The movie '{movieDtoPost.English_title}' already exists in database. ");
                 return isSuccess;
             }
 
-            string sqlQuery = CustomSqlServices.CreateInsertQueryStringFromObject(movieDto, "movies");
+            string sqlQuery = CustomSqlServices.CreateInsertQueryStringFromObject(movieDtoPost, "movies");
 
             try
             {
                 Console.WriteLine("Inserting into database... ");
-                await _db.ExecuteAsync(sqlQuery, movieDto);
+                await _db.ExecuteAsync(sqlQuery, movieDtoPost);
                 isSuccess = true;
             }
             catch (Exception ex)
@@ -137,19 +128,19 @@ namespace GhiblipediaAPI.Data
             return isSuccess; //Testa
         }
 
-        public async Task<Movie> ConvertOmdbMovieToMovie(string englishTitle)
+        public async Task<MoviePostPut> ConvertOmdbMovieToMoviePost(string englishTitle)
         {
             OmdbMovie omdbMovie = await _omdbAPI.GetOmdbMovie(englishTitle);
 
-            Movie movie = _mapper.Map<Movie>(omdbMovie);
+            MoviePostPut movie = _mapper.Map<MoviePostPut>(omdbMovie);
 
             return movie;
 
         }
 
-        public async Task<int> UpdateMovieInDB(string englishTitle, Movie MovieNewData)
+        public async Task<int> UpdateMovieInDB(string englishTitle, MoviePostPut MovieNewData)
         {
-            MovieDtoReadOnly movieDtoNewData = ConvertMovieToMovieDto(MovieNewData);
+            MovieDtoPostPut movieDtoNewData = ConvertMoviePostToMovieDtoPost(MovieNewData);
 
             PropertyInfo[] properties = movieDtoNewData.GetType()
                                             .GetProperties(BindingFlags.Public | BindingFlags.Instance)
@@ -179,7 +170,7 @@ namespace GhiblipediaAPI.Data
             return rowsUpdated;
         }
 
-        public async Task UpdateMovie(Movie movieToUpdate)
+        public async Task UpdateMovie(MoviePostPut movieToUpdate)
         {
             string replaceQuery = "REPLACE INTO movies VALUES @Values;";
 

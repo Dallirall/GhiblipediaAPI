@@ -4,20 +4,19 @@ namespace GhiblipediaAPI.Data
 {
     public interface IMovieRepository
     {
-        object GetTest();
-        IEnumerable<Movie> GetAllMovies();
+        Task<IEnumerable<MovieGet>> GetAllMovies();
 
-        public Task<Movie> GetMovieByID(int id);
+        public Task<MovieGet> GetMovieByID(int id);
 
-        public Task<Movie> GetMovieByTitle(string english_title);
+        public Task<MovieGet> GetMovieByTitle(string english_title);
 
-        public Task<bool> PostMovieInDB(Movie movie);
+        public Task<bool> PostMovieInDB(MoviePostPut movie);
 
-        public Task<Movie> ConvertOmdbMovieToMovie(string englishTitle);
+        public Task<MoviePostPut> ConvertOmdbMovieToMoviePost(string englishTitle);
 
-        public Task<int> UpdateMovieInDB(string englishTitle, Movie MovieDataToUpdate);//Ändra denna?
+        public Task<int> UpdateMovieInDB(string englishTitle, MoviePostPut MovieDataToUpdate);//Ändra denna?
 
-        public Task UpdateMovie(Movie movie);
+        public Task UpdateMovie(MoviePostPut movie);
 
     }
 }
