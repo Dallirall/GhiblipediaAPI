@@ -29,27 +29,52 @@ namespace GhiblipediaAPI.Services
             return query;           
         }
 
-        //public static string CreateUpdateQueryStringFromObject(object obj, string tableName, string conditionColumn, string conditionValue)
-        //{         
-        //    PropertyInfo[] propertyInfo = obj.GetType()
-        //                                            .GetProperties(BindingFlags.Public | BindingFlags.Instance)
-        //                                            .Where(prop => prop.GetValue(obj) != null).ToArray();
-        //    List<string> propertyNames = new List<string>();
+        public static string CreateUpdateQueryStringFromObject(object obj, string tableName, string conditionColumn, string conditionValue)
+        {
+            
 
-        //    foreach (PropertyInfo propInf in propertyInfo)
-        //    {
-        //        propertyNames.Add(propInf.Name);
-        //    }
+            PropertyInfo[] propertyInfo = obj.GetType()
+                                                    .GetProperties(BindingFlags.Public | BindingFlags.Instance)
+                                                    .Where(prop => prop.GetValue(obj) != null).ToArray();
+            List<string> propertyNames = new List<string>();
+                        
 
-        //    string columnNamesString = string.Join(", ", propertyNames);
+            foreach (PropertyInfo propInf in propertyInfo)
+            {
+                propertyNames.Add(propInf.Name);
+            }
 
-        //    string sqlPlaceHolders = string.Join(", ", propertyNames.Select(prop => "@" + prop));
+            string columnNamesString = string.Join(", ", propertyNames);
+
+            string sqlPlaceHolders = string.Join(", ", propertyNames.Select(prop => "@" + prop));
+
+            string query = $"UPDATE {tableName} SET ({columnNamesString}) = ({sqlPlaceHolders}) WHERE {conditionColumn} = {conditionValue};";
 
 
-        //    string query = $"UPDATE {tableName} SET ({columnNamesString}) VALUES ({sqlPlaceHolders}) WHERE {conditionColumn} = {conditionValue}";
+            //int i = 0;
+            //string query = $"UPDATE {tableName} SET ";
+            //do
+            //{
+            //    query += $"{propertyInfo[i].Name} = @{propertyInfo[i].Name}";
 
-        //    return query;
-        //}
+            //    i++;
+
+            //    if (i == propertyInfo.Length)
+            //        break;
+
+            //    query += " , ";
+
+            //} while (i < propertyInfo.Length);
+            //query += $" WHERE {conditionColumn} = {conditionValue};";
+
+
+
+
+
+
+
+            return query;
+        }
 
 
     }

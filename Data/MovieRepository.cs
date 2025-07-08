@@ -125,7 +125,7 @@ namespace GhiblipediaAPI.Data
             {
                 Console.WriteLine($"Error: {ex}");                
             }
-            return isSuccess; //Testa
+            return isSuccess; 
         }
 
         public async Task<MoviePostPut> ConvertOmdbMovieToMoviePost(string englishTitle)
@@ -170,12 +170,15 @@ namespace GhiblipediaAPI.Data
             return rowsUpdated;
         }
 
-        public async Task UpdateMovie(MoviePostPut movieToUpdate)
+        //Testa denna 
+        public async Task UpdateMovie(string englishTitle, MoviePostPut MovieNewData)
         {
-            string replaceQuery = "REPLACE INTO movies VALUES @Values;";
+            MovieDtoPostPut movieDtoNewData = ConvertMoviePostToMovieDtoPost(MovieNewData);
+
+            string updateQuery = CustomSqlServices.CreateUpdateQueryStringFromObject(movieDtoNewData, "movies", "english_title", englishTitle);
 
             int rowsUpdated = 0;
-            rowsUpdated = await _db.ExecuteAsync(replaceQuery, movieToUpdate);
+            rowsUpdated = await _db.ExecuteAsync(updateQuery, MovieNewData);
         }
 
     }
