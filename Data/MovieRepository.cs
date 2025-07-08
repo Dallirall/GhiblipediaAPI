@@ -32,14 +32,14 @@ namespace GhiblipediaAPI.Data
         }
 
 
-        public Movie ConvertMovieDtoToMovie(MovieDto dto)
+        public Movie ConvertMovieDtoToMovie(MovieDtoReadOnly dto)
         {
             return _mapper.Map<Movie>(dto);
         }
 
-        public MovieDto ConvertMovieToMovieDto(Movie movie)
+        public MovieDtoReadOnly ConvertMovieToMovieDto(Movie movie)
         {
-            return _mapper.Map<MovieDto>(movie);
+            return _mapper.Map<MovieDtoReadOnly>(movie);
         }
 
         //Async??
@@ -47,7 +47,7 @@ namespace GhiblipediaAPI.Data
         {
             string sqlQuery = "SELECT * FROM movies;";
 
-            var result = _db.Query<MovieDto>(sqlQuery);
+            var result = _db.Query<MovieDtoReadOnly>(sqlQuery);
             if (result == null) return null; //Rätt..?
 
             return result.Select(dto => ConvertMovieDtoToMovie(dto));
@@ -59,7 +59,7 @@ namespace GhiblipediaAPI.Data
 
             try
             {
-                var result = await _db.QueryFirstOrDefaultAsync<MovieDto>(sqlQuery, new { movie_id = id });
+                var result = await _db.QueryFirstOrDefaultAsync<MovieDtoReadOnly>(sqlQuery, new { movie_id = id });
                 if (result == null) return null; //Rätt..?
 
                 return ConvertMovieDtoToMovie(result);
@@ -79,7 +79,7 @@ namespace GhiblipediaAPI.Data
 
             try
             {
-                var result = await _db.QueryFirstOrDefaultAsync<MovieDto>(sqlQuery, new { english_title = englishTitle });
+                var result = await _db.QueryFirstOrDefaultAsync<MovieDtoReadOnly>(sqlQuery, new { english_title = englishTitle });
                 if (result == null) return null; //Rätt..?
 
                 return ConvertMovieDtoToMovie(result);
@@ -149,7 +149,7 @@ namespace GhiblipediaAPI.Data
 
         public async Task<int> UpdateMovieInDB(string englishTitle, Movie MovieNewData)
         {
-            MovieDto movieDtoNewData = ConvertMovieToMovieDto(MovieNewData);
+            MovieDtoReadOnly movieDtoNewData = ConvertMovieToMovieDto(MovieNewData);
 
             PropertyInfo[] properties = movieDtoNewData.GetType()
                                             .GetProperties(BindingFlags.Public | BindingFlags.Instance)

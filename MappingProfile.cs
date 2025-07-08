@@ -7,7 +7,7 @@ namespace GhiblipediaAPI
     {
         public MappingProfile()
         {
-            CreateMap<MovieDto, Movie>()
+            CreateMap<MovieDtoReadOnly, Movie>()
                 .ForMember(dest => dest.MovieId, opt => opt.MapFrom(src => src.Movie_id))
                 .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => src.Created_at))
                 .ForMember(dest => dest.EnglishTitle, opt => opt.MapFrom(src => src.English_title))
@@ -22,7 +22,7 @@ namespace GhiblipediaAPI
                 .ForMember(dest => dest.RunningTime, opt => opt.MapFrom(src => src.Running_time))
                 ;
 
-            CreateMap<Movie, MovieDto>()
+            CreateMap<Movie, MovieDtoReadOnly>()
                 .ForMember(dest => dest.Movie_id, opt => opt.MapFrom(src => src.MovieId))
                 .ForMember(dest => dest.Created_at, opt => opt.MapFrom(src => src.CreatedAt))
                 .ForMember(dest => dest.English_title, opt => opt.MapFrom(src => src.EnglishTitle))

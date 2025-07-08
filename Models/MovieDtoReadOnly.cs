@@ -1,9 +1,9 @@
 ﻿namespace GhiblipediaAPI.Models
 {
-    public class MovieDto
+    public class MovieDtoReadOnly
     {
-        public int? Movie_id { get; set; } // Auto-increment by default.
-        public DateTime Created_at { get; set; } //Do not set value manually. A timestamp is set automatically in the database.
+        public int? Movie_id { get; set; } 
+        public DateTime? Created_at { get; set; }
         public string? English_title { get; set; }
         public string? Japanese_title { get; set; }
         public string? Release_date { get; set; }

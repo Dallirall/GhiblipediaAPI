@@ -1,11 +1,9 @@
 ﻿namespace GhiblipediaAPI.Models
 {
-    public class Movie
-    {
-        public int? MovieId { get; set; }
-        public DateTime? CreatedAt { get; set; }
+    public class MovieWriteCreate
+    {        
         public string? EnglishTitle { get; set; }
-        public string? JapaneseTitle { get; set; }        
+        public string? JapaneseTitle { get; set; }
         public string? ReleaseDate { get; set; }
         public string? ImageUrl { get; set; }
         public string? TrailerUrl { get; set; }
@@ -17,3 +15,4 @@
         public string[]? Tags { get; set; }
     }
 }
+
