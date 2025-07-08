@@ -20,7 +20,11 @@ namespace GhiblipediaAPI
                 .ForMember(dest => dest.Director, opt => opt.MapFrom(src => src.Director))
                 .ForMember(dest => dest.Genre, opt => opt.MapFrom(src => src.Genre))
                 .ForMember(dest => dest.RunningTime, opt => opt.MapFrom(src => src.Running_time))
-                ;
+                .ForMember(dest => dest.Tags, opt => 
+                {
+                    opt.PreCondition(src => src.Tags != null);
+                    opt.MapFrom(src => src.Tags);
+                });
 
             CreateMap<MovieGet, MovieDtoGet>()
                 .ForMember(dest => dest.Movie_id, opt => opt.MapFrom(src => src.MovieId))
@@ -35,7 +39,11 @@ namespace GhiblipediaAPI
                 .ForMember(dest => dest.Director, opt => opt.MapFrom(src => src.Director))
                 .ForMember(dest => dest.Genre, opt => opt.MapFrom(src => src.Genre))
                 .ForMember(dest => dest.Running_time, opt => opt.MapFrom(src => src.RunningTime))
-                ;
+                .ForMember(dest => dest.Tags, opt =>
+                {
+                    opt.PreCondition(src => src.Tags != null);
+                    opt.MapFrom(src => src.Tags);
+                });
 
             CreateMap<MovieDtoPostPut, MoviePostPut>()                
                 .ForMember(dest => dest.EnglishTitle, opt => opt.MapFrom(src => src.English_title))
@@ -48,7 +56,11 @@ namespace GhiblipediaAPI
                 .ForMember(dest => dest.Director, opt => opt.MapFrom(src => src.Director))
                 .ForMember(dest => dest.Genre, opt => opt.MapFrom(src => src.Genre))
                 .ForMember(dest => dest.RunningTime, opt => opt.MapFrom(src => src.Running_time))
-                ;
+                .ForMember(dest => dest.Tags, opt =>
+                {
+                    opt.PreCondition(src => src.Tags != null);
+                    opt.MapFrom(src => src.Tags);
+                });
 
             CreateMap<MoviePostPut, MovieDtoPostPut>()                
                 .ForMember(dest => dest.English_title, opt => opt.MapFrom(src => src.EnglishTitle))
@@ -61,7 +73,11 @@ namespace GhiblipediaAPI
                 .ForMember(dest => dest.Director, opt => opt.MapFrom(src => src.Director))
                 .ForMember(dest => dest.Genre, opt => opt.MapFrom(src => src.Genre))
                 .ForMember(dest => dest.Running_time, opt => opt.MapFrom(src => src.RunningTime))
-                ;
+                .ForMember(dest => dest.Tags, opt =>
+                {
+                    opt.PreCondition(src => src.Tags != null);
+                    opt.MapFrom(src => src.Tags);
+                });
 
 
             CreateMap<OmdbMovie, MoviePostPut>()                
