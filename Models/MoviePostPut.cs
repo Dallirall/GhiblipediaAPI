@@ -23,7 +23,13 @@
             set 
             {
                 if (value == null || value is Array arr && arr.Length == 0)
+                {
                     _tags = null;
+                }
+                else
+                {
+                    _tags = value;
+                }
             }
         } 
     }

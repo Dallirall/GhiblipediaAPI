@@ -48,8 +48,17 @@ namespace GhiblipediaAPI.Services
 
             string sqlPlaceHolders = string.Join(", ", propertyNames.Select(prop => "@" + prop));
 
-            string query = $"UPDATE {tableName} SET ({columnNamesString}) = ({sqlPlaceHolders}) WHERE {whereConditionClause};";
+            string query = "";
+            if (propertyNames.Count > 1)
+            {
+                query = $"UPDATE {tableName} SET ({columnNamesString}) = ({sqlPlaceHolders}) WHERE {whereConditionClause};";
+            }
+            else
+            {
+                query = $"UPDATE {tableName} SET {columnNamesString} = {sqlPlaceHolders} WHERE {whereConditionClause};";
+            }
 
+            return query;
 
             //int i = 0;
             //string query = $"UPDATE {tableName} SET ";
@@ -67,13 +76,6 @@ namespace GhiblipediaAPI.Services
             //} while (i < propertyInfo.Length);
             //query += $" WHERE {conditionColumn} = {conditionValue};";
 
-
-
-
-
-
-
-            return query;
         }
 
 

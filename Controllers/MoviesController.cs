@@ -127,27 +127,52 @@ namespace GhiblipediaAPI.Controllers
 
         [HttpPut]
         [Route("{englishTitle}")]
-        public async Task<IActionResult> UpdateMovie(string englishTitle, [FromBody] MoviePostPut MovieNewData)
+        public async Task<IActionResult> UpdateMovieByTitle(string englishTitle, [FromBody] MoviePostPut MovieNewData)
         {
             if (MovieNewData == null) return UnprocessableEntity();
 
             try
             {
-                MovieGet movieToUpdate = await _movieRepo.GetMovieByTitle(englishTitle);
-                if (movieToUpdate == null)
+                MovieGet movieFromDb = await _movieRepo.GetMovieByTitle(englishTitle);
+                if (movieFromDb == null)
                 {
                     Console.WriteLine($"The movie {englishTitle} does not yet exist in database. ");
                     return BadRequest();
                 }
 
-                int rowsUpdatedResponse = await _movieRepo.UpdateMovieInDB(englishTitle, MovieNewData);
+                await _movieRepo.UpdateMovieInDb(movieFromDb.MovieId, MovieNewData);
             }
             catch (Exception ex)
             {
                 return StatusCode(500, ex);
             }
 
-            return Ok((GetByTitle($"{englishTitle}")));
+            return Ok();
+        }
+
+        [HttpPut]
+        [Route("{movieID:int}")]
+        public async Task<IActionResult> UpdateMovieById(int movieID, [FromBody] MoviePostPut MovieNewData)
+        {
+            if (MovieNewData == null) return UnprocessableEntity();
+
+            try
+            {
+                MovieGet movieFromDb = await _movieRepo.GetMovieByID(movieID);
+                if (movieFromDb == null)
+                {
+                    Console.WriteLine($"The movie does not yet exist in database. ");
+                    return BadRequest();
+                }
+
+                await _movieRepo.UpdateMovieInDb(movieFromDb.MovieId, MovieNewData);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex);
+            }
+
+            return Ok();
         }
 
         [HttpPatch]
@@ -166,7 +191,7 @@ namespace GhiblipediaAPI.Controllers
             
             var updateMovie = _movieRepo.ConvertMovieGetToMoviePost(movieFromDb);
 
-            await _movieRepo.UpdateMovie(movieFromDb.MovieId, updateMovie);
+            await _movieRepo.UpdateMovieInDb(movieFromDb.MovieId, updateMovie);
             return Ok(movieFromDb);
 
         }

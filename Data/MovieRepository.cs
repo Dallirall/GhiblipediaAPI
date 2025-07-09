@@ -137,45 +137,51 @@ namespace GhiblipediaAPI.Data
         {
             OmdbMovie omdbMovie = await _omdbAPI.GetOmdbMovie(englishTitle);
 
-            MoviePostPut movie = _mapper.Map<MoviePostPut>(omdbMovie);
-
-            return movie;
-
-        }
-
-        public async Task<int> UpdateMovieInDB(string englishTitle, MoviePostPut MovieNewData)
-        {
-            MovieDtoPostPut movieDtoNewData = ConvertMoviePostToMovieDtoPost(MovieNewData);
-
-            PropertyInfo[] properties = movieDtoNewData.GetType()
-                                            .GetProperties(BindingFlags.Public | BindingFlags.Instance)
-                                            .Where(prop => prop.GetValue(movieDtoNewData) != null).ToArray();
-            
-            int rowsUpdated = 0;
-            foreach (var property in properties)
+            if (omdbMovie != null)
             {
-                string updateQuery = $"UPDATE movies SET @Column = @Value WHERE english_title = @English_title;";
-
-                var placeHolders = new { Value = property.GetValue(movieDtoNewData), English_title = englishTitle, Column = property.Name.ToLower() };
-                                
-                try
-                {
-                    Console.WriteLine($"Updating column: {property.Name.ToLower()} with value: {placeHolders.Value?.ToString() ?? "NULL"}");
-
-                    rowsUpdated += await _db.ExecuteAsync(updateQuery, placeHolders);
-
-                    Console.WriteLine("Currently updated rows: " + rowsUpdated);
-                }
-                catch (Exception ex)
-                {                    
-                    Console.WriteLine($"Could not update column {property.Name.ToLower()}. Exception: {ex.Message}");
-                }
-                                
+                MoviePostPut movie = _mapper.Map<MoviePostPut>(omdbMovie);
+                return movie;
             }
-            return rowsUpdated;
+
+            return null;
+
         }
+
+        //public async Task<int> UpdateMovie(int? movieId, MoviePostPut MovieNewData)
+        //{
+        //    MovieDtoPostPut movieDtoNewData = ConvertMoviePostToMovieDtoPost(MovieNewData);
+
+        //    return 1;
+
+        //    //PropertyInfo[] properties = movieDtoNewData.GetType()
+        //    //                                .GetProperties(BindingFlags.Public | BindingFlags.Instance)
+        //    //                                .Where(prop => prop.GetValue(movieDtoNewData) != null).ToArray();
+            
+        //    //int rowsUpdated = 0;
+        //    //foreach (var property in properties)
+        //    //{
+        //    //    string updateQuery = $"UPDATE movies SET @Column = @Value WHERE english_title = @English_title;";
+
+        //    //    var placeHolders = new { Value = property.GetValue(movieDtoNewData), English_title = englishTitle, Column = property.Name.ToLower() };
+                                
+        //    //    try
+        //    //    {
+        //    //        Console.WriteLine($"Updating column: {property.Name.ToLower()} with value: {placeHolders.Value?.ToString() ?? "NULL"}");
+
+        //    //        rowsUpdated += await _db.ExecuteAsync(updateQuery, placeHolders);
+
+        //    //        Console.WriteLine("Currently updated rows: " + rowsUpdated);
+        //    //    }
+        //    //    catch (Exception ex)
+        //    //    {                    
+        //    //        Console.WriteLine($"Could not update column {property.Name.ToLower()}. Exception: {ex.Message}");
+        //    //    }
+                                
+        //    //}
+        //    //return rowsUpdated;
+        //}
                 
-        public async Task UpdateMovie(int? movieId, MoviePostPut MovieNewData)
+        public async Task UpdateMovieInDb(int? movieId, MoviePostPut MovieNewData)
         {
             MovieDtoPostPut movieDtoNewData = ConvertMoviePostToMovieDtoPost(MovieNewData);
 
