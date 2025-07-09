@@ -29,7 +29,7 @@ namespace GhiblipediaAPI.Services
             return query;           
         }
 
-        public static string CreateUpdateQueryStringFromObject(object obj, string tableName, string conditionColumn, string conditionValue)
+        public static string CreateUpdateQueryStringFromObject(object obj, string tableName, string whereConditionClause)
         {
             
 
@@ -48,7 +48,7 @@ namespace GhiblipediaAPI.Services
 
             string sqlPlaceHolders = string.Join(", ", propertyNames.Select(prop => "@" + prop));
 
-            string query = $"UPDATE {tableName} SET ({columnNamesString}) = ({sqlPlaceHolders}) WHERE {conditionColumn} = {conditionValue};";
+            string query = $"UPDATE {tableName} SET ({columnNamesString}) = ({sqlPlaceHolders}) WHERE {whereConditionClause};";
 
 
             //int i = 0;

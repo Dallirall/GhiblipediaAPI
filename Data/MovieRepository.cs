@@ -42,6 +42,11 @@ namespace GhiblipediaAPI.Data
             return _mapper.Map<MovieDtoPostPut>(dto);
         }
 
+        public MoviePostPut ConvertMovieGetToMoviePost(MovieGet movieGet)
+        {
+            return _mapper.Map<MoviePostPut>(movieGet);
+        }
+
         public async Task<IEnumerable<MovieGet>> GetAllMovies()
         {
             string sqlQuery = "SELECT * FROM movies;";
@@ -169,16 +174,15 @@ namespace GhiblipediaAPI.Data
             }
             return rowsUpdated;
         }
-
-        //Testa denna 
-        public async Task UpdateMovie(string englishTitle, MoviePostPut MovieNewData)
+                
+        public async Task UpdateMovie(int? movieId, MoviePostPut MovieNewData)
         {
             MovieDtoPostPut movieDtoNewData = ConvertMoviePostToMovieDtoPost(MovieNewData);
 
-            string updateQuery = CustomSqlServices.CreateUpdateQueryStringFromObject(movieDtoNewData, "movies", "english_title", englishTitle);
+            string updateQuery = CustomSqlServices.CreateUpdateQueryStringFromObject(movieDtoNewData, "movies", $"movie_id = {movieId}");
 
             int rowsUpdated = 0;
-            rowsUpdated = await _db.ExecuteAsync(updateQuery, MovieNewData);
+            rowsUpdated = await _db.ExecuteAsync(updateQuery, movieDtoNewData);
         }
 
     }

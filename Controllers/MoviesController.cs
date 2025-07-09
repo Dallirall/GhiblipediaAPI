@@ -150,25 +150,26 @@ namespace GhiblipediaAPI.Controllers
             return Ok((GetByTitle($"{englishTitle}")));
         }
 
-        //[HttpPatch]
-        //[Route("{englishTitle}")]
-        //public async Task<IActionResult> PatchMovie(string englishTitle, [FromBody] JsonPatchDocument<MovieGet> patchDoc)
-        //{
-        //    if (patchDoc == null)
-        //        return BadRequest();
+        [HttpPatch]
+        [Route("{englishTitle}")]
+        public async Task<IActionResult> PatchMovie(string englishTitle, [FromBody] JsonPatchDocument<MovieGet> patchDoc)
+        {
+            if (patchDoc == null)
+                return BadRequest();
+
+
+            var movieFromDb = await _movieRepo.GetMovieByTitle(englishTitle);
+            if (movieFromDb == null)
+                return NotFound();
+                        
+            patchDoc.ApplyTo(movieFromDb, ModelState);
             
+            var updateMovie = _movieRepo.ConvertMovieGetToMoviePost(movieFromDb);
 
-        //    var movieToUpdate = await _movieRepo.GetMovieByTitle(englishTitle);
-        //    if (movieToUpdate == null)
-        //        return NotFound();
+            await _movieRepo.UpdateMovie(movieFromDb.MovieId, updateMovie);
+            return Ok(movieFromDb);
 
-        //    //Kolla vadfan ModelState är...
-        //    patchDoc.ApplyTo(movieToUpdate, ModelState);
-
-        //    await _movieRepo.UpdateMovie(movieToUpdate);
-        //    return Ok(movieToUpdate);
-
-        //}
+        }
 
     }
 }
