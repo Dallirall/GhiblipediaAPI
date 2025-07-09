@@ -27,7 +27,7 @@ URL for api calls to the service hosted on Render: https://ghiblipediaapi.onrend
 
 <br>
 
-- /api/movies - Adds a movie object to the database. Use the .json template ("Database_insert_template" on Trello) for all the available object properties. It's not possible to set your own movie ID at the moment. English title is mandatory.
+- /api/movies - Adds a movie object to the database. Use the .json template ("Database_insert_template" on Trello) for all the available object properties (omit unwanted properties). It's not possible to set your own movie ID at the moment, so that field is omitted in POSTs. English title is required.
   > _Ex: POST /api/movies_<br> _{"englishTitle": "Spirited Away","releaseYear": 2001}_
 - api/movies/omdb/{englishTitle} - Adds a movie object to the database using available data fetched from omdbapi.com.
   > _Ex: POST /api/movies/omdb/spirited%20away_

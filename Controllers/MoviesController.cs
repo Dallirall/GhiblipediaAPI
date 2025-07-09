@@ -1,6 +1,7 @@
 ﻿using GhiblipediaAPI.Data;
 using GhiblipediaAPI.Models;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
 using System.Threading.Tasks; //Behövs denna?
@@ -18,26 +19,12 @@ namespace GhiblipediaAPI.Controllers
             _movieRepo = movieRepo;
         }
 
-
-        [HttpGet]
-        [Route("{testVar}/{moreTest}/{testInt:int}")]
-        public ActionResult GetTestObj(string testVar, string moreTest, int testInt)
-        {
-            var testObj = _movieRepo.GetTest();
-
-            return Ok(testObj);
-        }
-
-
-
-        //TODO: Gör det async
-
         //api/movies (ex: GET api/movies)
         [HttpGet]
         [Route("")]
-        public ActionResult<IEnumerable<Movie>> GetAll()
+        public async Task<ActionResult<IEnumerable<MovieGet>>> GetAll()
         {
-            var movies = _movieRepo.GetAllMovies();
+            var movies = await _movieRepo.GetAllMovies();
             if (movies == null) return NotFound();
 
             return Ok(movies);
@@ -46,7 +33,7 @@ namespace GhiblipediaAPI.Controllers
         //api/movies/{movieID} (ex: GET api/movies/1) 
         [HttpGet]
         [Route("{movieID:int}")]        
-        public async Task<ActionResult<Movie>> GetByID(int movieID)
+        public async Task<ActionResult<MovieGet>> GetByID(int movieID)
         {
             try
             {
@@ -66,7 +53,7 @@ namespace GhiblipediaAPI.Controllers
         //api/movies/{englishTitle} (ex: GET api/movies/spirited%20away)
         [HttpGet]
         [Route("{englishTitle}")]        
-        public async Task<ActionResult<Movie>> GetByTitle(string englishTitle)
+        public async Task<ActionResult<MovieGet>> GetByTitle(string englishTitle)
         {
             try
             {
@@ -87,7 +74,7 @@ namespace GhiblipediaAPI.Controllers
         //api/movies/{englishTitle}/fullplot || api/movies/{englishTitle}/summary (ex: GET api/movies/spirited%20away/fullplot)
         [HttpGet]
         [Route("{englishTitle}/{plotType}")]
-        public async Task<ActionResult<Movie>> GetFullPlotOrSummary(string englishTitle, string plotType)
+        public async Task<ActionResult<MovieGet>> GetFullPlotOrSummary(string englishTitle, string plotType)
         {
             var movie = await _movieRepo.GetMovieByTitle(englishTitle);
 
@@ -101,15 +88,20 @@ namespace GhiblipediaAPI.Controllers
             {
                 return Ok(movie.Summary);
             }
-            return BadRequest(); //Rätt??
+            return BadRequest(); 
         }
 
         [HttpPost]
         [Route("")]
-        public IActionResult PostMovie([FromBody] Movie movie)
+        public async Task<IActionResult> PostMovie([FromBody] MoviePostPut movie)
         {
-            if (movie == null) return UnprocessableEntity(); //Korrekt??
-            _movieRepo.PostMovieInDB(movie);          
+            if (movie == null) return UnprocessableEntity(); 
+            bool isSuccess = await _movieRepo.PostMovieInDB(movie);
+            
+            if (!isSuccess)
+            {
+                return StatusCode(500, "Internal server error");
+            }
 
             return CreatedAtAction(nameof(GetAll), movie);
         }
@@ -120,34 +112,90 @@ namespace GhiblipediaAPI.Controllers
         {
             if (englishTitle == null) return UnprocessableEntity();
 
-            Movie movie = new Movie();
-            movie = await _movieRepo.ConvertOmdbMovieToMovie(englishTitle);            
-            
-            _movieRepo.PostMovieInDB(movie);
+            MoviePostPut movie = new MoviePostPut();
+            movie = await _movieRepo.ConvertOmdbMovieToMoviePost(englishTitle);
+
+            bool isSuccess = await _movieRepo.PostMovieInDB(movie);
+
+            if (!isSuccess)
+            {
+                return StatusCode(500, "Internal server error");
+            }
 
             return CreatedAtAction(nameof(GetAll), movie);
         }
 
-        //[HttpPut]
-        //[Route("{englishTitle}")]
-        //public async Task<IActionResult> UpdateMovie(string englishTitle, [FromBody] Movie MovieNewData)
-        //{
-        //    if (MovieNewData == null) return UnprocessableEntity();
+        [HttpPut]
+        [Route("{englishTitle}")]
+        public async Task<IActionResult> UpdateMovieByTitle(string englishTitle, [FromBody] MoviePostPut MovieNewData)
+        {
+            if (MovieNewData == null) return UnprocessableEntity();
 
-        //    try
-        //    {
-        //        Movie movieToUpdate = _movieRepo.GetMovieByTitle(englishTitle);
-        //        if (movieToUpdate == null) return BadRequest();
+            try
+            {
+                MovieGet movieFromDb = await _movieRepo.GetMovieByTitle(englishTitle);
+                if (movieFromDb == null)
+                {
+                    Console.WriteLine($"The movie {englishTitle} does not yet exist in database. ");
+                    return BadRequest();
+                }
 
-        //        int rowsUpdatedResponse = await _movieRepo.UpdateMovieInDB(englishTitle, MovieNewData);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return StatusCode(500, ex);
-        //    }
+                await _movieRepo.UpdateMovieInDb(movieFromDb.MovieId, MovieNewData);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex);
+            }
 
-        //    return Ok((GetByTitle($"{englishTitle}")));
-        //}
+            return Ok();
+        }
+
+        [HttpPut]
+        [Route("{movieID:int}")]
+        public async Task<IActionResult> UpdateMovieById(int movieID, [FromBody] MoviePostPut MovieNewData)
+        {
+            if (MovieNewData == null) return UnprocessableEntity();
+
+            try
+            {
+                MovieGet movieFromDb = await _movieRepo.GetMovieByID(movieID);
+                if (movieFromDb == null)
+                {
+                    Console.WriteLine($"The movie does not yet exist in database. ");
+                    return BadRequest();
+                }
+
+                await _movieRepo.UpdateMovieInDb(movieFromDb.MovieId, MovieNewData);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex);
+            }
+
+            return Ok();
+        }
+
+        [HttpPatch]
+        [Route("{englishTitle}")]
+        public async Task<IActionResult> PatchMovie(string englishTitle, [FromBody] JsonPatchDocument<MovieGet> patchDoc)
+        {
+            if (patchDoc == null)
+                return BadRequest();
+
+
+            var movieFromDb = await _movieRepo.GetMovieByTitle(englishTitle);
+            if (movieFromDb == null)
+                return NotFound();
+                        
+            patchDoc.ApplyTo(movieFromDb, ModelState);
+            
+            var updateMovie = _movieRepo.ConvertMovieGetToMoviePost(movieFromDb);
+
+            await _movieRepo.UpdateMovieInDb(movieFromDb.MovieId, updateMovie);
+            return Ok(movieFromDb);
+
+        }
+
     }
 }
 //[ProducesResponseType<T>(StatusCodes.Status200OK)]

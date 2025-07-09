@@ -8,64 +8,76 @@ namespace GhiblipediaAPI.Services
         public static string CreateInsertQueryStringFromObject(object obj, string tableName)
         {
             //TODO Dubbelkolla denna 
-            try
+            
+            PropertyInfo[] propertyInfo = obj.GetType()
+                                                    .GetProperties(BindingFlags.Public | BindingFlags.Instance)
+                                                    .Where(prop => prop.GetValue(obj) != null).ToArray();
+            List<string> propertyNames = new List<string>();
+
+            foreach (PropertyInfo propInf in propertyInfo)
             {
-                PropertyInfo[] propertyInfo = obj.GetType()
-                                                        .GetProperties(BindingFlags.Public | BindingFlags.Instance)
-                                                        .Where(prop => prop.GetValue(obj) != null).ToArray();
-                List<string> propertyNames = new List<string>();
-
-                foreach (PropertyInfo propInf in propertyInfo)
-                {
-                    propertyNames.Add(propInf.Name);
-                }
-
-                string columnNamesString = string.Join(", ", propertyNames);
-
-                string sqlPlaceHolders = string.Join(", ", propertyNames.Select(prop => "@" + prop));
-
-
-                string query = $"INSERT INTO {tableName} ({columnNamesString}) VALUES ({sqlPlaceHolders})";
-
-                return query;
+                propertyNames.Add(propInf.Name);
             }
-            catch (Exception ex)
-            {
-                throw new Exception("Error: " + ex.Message);
-            }
+
+            string columnNamesString = string.Join(", ", propertyNames);
+
+            string sqlPlaceHolders = string.Join(", ", propertyNames.Select(prop => "@" + prop));
+
+
+            string query = $"INSERT INTO {tableName} ({columnNamesString}) VALUES ({sqlPlaceHolders})";
+
+            return query;           
         }
 
-        //public void AddObjectToDBTable(object toRegister, string tableName)
-        //{
-        //    try
-        //    {
-        //        PropertyInfo[] propertyInfo = toRegister.GetType()
-        //                                                .GetProperties(BindingFlags.Public | BindingFlags.Instance)
-        //                                                .Where(prop => prop.GetValue(toRegister) != null).ToArray();
-        //        List<string> propertyNames = new List<string>();
+        public static string CreateUpdateQueryStringFromObject(object obj, string tableName, string whereConditionClause)
+        {
+            
 
-        //        foreach (PropertyInfo propInf in propertyInfo)
-        //        {
-        //            propertyNames.Add(propInf.Name);
-        //        }
+            PropertyInfo[] propertyInfo = obj.GetType()
+                                                    .GetProperties(BindingFlags.Public | BindingFlags.Instance)
+                                                    .Where(prop => prop.GetValue(obj) != null).ToArray();
+            List<string> propertyNames = new List<string>();
+                        
 
-        //        string columnNamesString = string.Join(", ", propertyNames);
+            foreach (PropertyInfo propInf in propertyInfo)
+            {
+                propertyNames.Add(propInf.Name);
+            }
 
-        //        string sqlPlaceHolders = string.Join(", ", propertyNames.Select(prop => "@" + prop));
+            string columnNamesString = string.Join(", ", propertyNames);
+
+            string sqlPlaceHolders = string.Join(", ", propertyNames.Select(prop => "@" + prop));
+
+            string query = "";
+            if (propertyNames.Count > 1)
+            {
+                query = $"UPDATE {tableName} SET ({columnNamesString}) = ({sqlPlaceHolders}) WHERE {whereConditionClause};";
+            }
+            else
+            {
+                query = $"UPDATE {tableName} SET {columnNamesString} = {sqlPlaceHolders} WHERE {whereConditionClause};";
+            }
+
+            return query;
+
+            //int i = 0;
+            //string query = $"UPDATE {tableName} SET ";
+            //do
+            //{
+            //    query += $"{propertyInfo[i].Name} = @{propertyInfo[i].Name}";
+
+            //    i++;
+
+            //    if (i == propertyInfo.Length)
+            //        break;
+
+            //    query += " , ";
+
+            //} while (i < propertyInfo.Length);
+            //query += $" WHERE {conditionColumn} = {conditionValue};";
+
+        }
 
 
-
-        //        string query = $"INSERT INTO {tableName} ({columnNamesString}) VALUES ({sqlPlaceHolders})";
-        //        using (SqliteConnection connection = new SqliteConnection(ConnectionString))
-        //        {
-        //            connection.Execute(query, toRegister);
-        //        }
-
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        throw new Exception("Error: " + ex.Message);
-        //    }
-        //}
     }
 }

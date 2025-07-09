@@ -44,8 +44,7 @@ namespace GhiblipediaAPI.Services
 
                 response.EnsureSuccessStatusCode(); // Throw if not a success code.
 
-                return await response.Content.ReadAsStringAsync();
-                //return JObject.Parse(responseBody); // Parse the response body as JSON
+                return await response.Content.ReadAsStringAsync();                
             }
             catch (HttpRequestException ex)
             {

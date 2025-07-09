@@ -22,47 +22,51 @@ namespace GhiblipediaAPI.Data
             _omdbAPI = omdbAPI;
         }
 
-
-        public object GetTest()
+        public MovieGet ConvertMovieDtoToMovieGet(MovieDtoGet dto)
         {
-            string sqlQuery = "SELECT * FROM test_table;";
-
-            var result = _db.Query(sqlQuery);
-            return result;
+            return _mapper.Map<MovieGet>(dto);
         }
 
-
-        public Movie ConvertMovieDtoToMovie(MovieDto dto)
+        public MovieDtoGet ConvertMovieGetToMovieDto(MovieGet movie)
         {
-            return _mapper.Map<Movie>(dto);
+            return _mapper.Map<MovieDtoGet>(movie);
         }
 
-        public MovieDto ConvertMovieToMovieDto(Movie movie)
+        public MoviePostPut ConvertMovieDtoPostToMoviePost(MovieDtoPostPut dto)
         {
-            return _mapper.Map<MovieDto>(movie);
+            return _mapper.Map<MoviePostPut>(dto);
         }
 
-        //Async??
-        public IEnumerable<Movie> GetAllMovies()
+        public MovieDtoPostPut ConvertMoviePostToMovieDtoPost(MoviePostPut dto)
+        {
+            return _mapper.Map<MovieDtoPostPut>(dto);
+        }
+
+        public MoviePostPut ConvertMovieGetToMoviePost(MovieGet movieGet)
+        {
+            return _mapper.Map<MoviePostPut>(movieGet);
+        }
+
+        public async Task<IEnumerable<MovieGet>> GetAllMovies()
         {
             string sqlQuery = "SELECT * FROM movies;";
 
-            var result = _db.Query<MovieDto>(sqlQuery);
-            if (result == null) return null; //Rätt..?
+            var result = await _db.QueryAsync<MovieDtoGet>(sqlQuery);
+            if (result == null) return null;
 
-            return result.Select(dto => ConvertMovieDtoToMovie(dto));
+            return result.Select(dto => ConvertMovieDtoToMovieGet(dto));
         }
 
-        public async Task<Movie> GetMovieByID(int id)
+        public async Task<MovieGet> GetMovieByID(int id)
         {
             string sqlQuery = $"SELECT * FROM movies WHERE movie_id = @movie_id;";
 
             try
             {
-                var result = await _db.QueryFirstOrDefaultAsync<MovieDto>(sqlQuery, new { movie_id = id });
-                if (result == null) return null; //Rätt..?
+                var result = await _db.QueryFirstOrDefaultAsync<MovieDtoGet>(sqlQuery, new { movie_id = id });
+                if (result == null) return null;
 
-                return ConvertMovieDtoToMovie(result);
+                return ConvertMovieDtoToMovieGet(result);
             }
             catch (Exception ex)
             {
@@ -72,17 +76,17 @@ namespace GhiblipediaAPI.Data
 
         }
 
-        public async Task<Movie> GetMovieByTitle(string englishTitle)
+        public async Task<MovieGet> GetMovieByTitle(string englishTitle)
         {
             string sqlQuery = $"SELECT * FROM movies WHERE english_title = @english_title;";
 
 
             try
             {
-                var result = await _db.QueryFirstOrDefaultAsync<MovieDto>(sqlQuery, new { english_title = englishTitle });
-                if (result == null) return null; //Rätt..?
+                var result = await _db.QueryFirstOrDefaultAsync<MovieDtoGet>(sqlQuery, new { english_title = englishTitle });
+                if (result == null) return null;
 
-                return ConvertMovieDtoToMovie(result);
+                return ConvertMovieDtoToMovieGet(result);
             }
             catch (Exception ex)
             {
@@ -95,73 +99,97 @@ namespace GhiblipediaAPI.Data
 
         //Den här metoden hade kunnat vara bra att unit testa ev.
 
-        public void PostMovieInDB(Movie movie)
+        public async Task<bool> PostMovieInDB(MoviePostPut movie)
         {
+            bool isSuccess = false;
             if (movie == null)
             {
-                throw new Exception("Could not find the data to post in database.");
+                Console.WriteLine("Could not find the data to post in database.");
+                return isSuccess;
+            }
+            
+            var movieDtoPost = ConvertMoviePostToMovieDtoPost(movie);
+
+            var existingMovie = await GetMovieByTitle(movieDtoPost.English_title);
+
+            if (existingMovie != null)
+            {
+                Console.WriteLine($"The movie '{movieDtoPost.English_title}' already exists in database. ");
+                return isSuccess;
             }
 
-            if (movie.MovieId != null)
-            {
-                movie.MovieId = null; //This field auto-increment by default.
-            }
-            var movieDto = ConvertMovieToMovieDto(movie);
-            string sqlQuery = CustomSqlServices.CreateInsertQueryStringFromObject(movieDto, "movies");
+            string sqlQuery = CustomSqlServices.CreateInsertQueryStringFromObject(movieDtoPost, "movies");
 
             try
             {
-                _db.Execute(sqlQuery, movieDto);
+                Console.WriteLine("Inserting into database... ");
+                await _db.ExecuteAsync(sqlQuery, movieDtoPost);
+                isSuccess = true;
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error: {ex}");
+                Console.WriteLine($"Error: {ex}");                
             }
-            //TODO: Returna något för att indikera om det failade, t.ex. om filmen redan finns i databasen..?
+            return isSuccess; 
         }
 
-        public async Task<Movie> ConvertOmdbMovieToMovie(string englishTitle)
+        public async Task<MoviePostPut> ConvertOmdbMovieToMoviePost(string englishTitle)
         {
             OmdbMovie omdbMovie = await _omdbAPI.GetOmdbMovie(englishTitle);
 
-            Movie movie = _mapper.Map<Movie>(omdbMovie);
-
-            return movie;
-
-        }
-
-        public async Task<int> UpdateMovieInDB(string englishTitle, Movie MovieNewData)
-        {
-            MovieDto movieDto = ConvertMovieToMovieDto(MovieNewData);
-
-            PropertyInfo[] properties = movieDto.GetType()
-                                            .GetProperties(BindingFlags.Public | BindingFlags.Instance)
-                                            .Where(prop => prop.GetValue(movieDto) != null).ToArray();
-            
-            int rowsUpdated = 0;
-            foreach (var property in properties)
+            if (omdbMovie != null)
             {
-                string updateQuery = $"UPDATE movies SET {property.Name.ToLower()} = @Value WHERE english_title = @English_title;";
-
-                var placeHolders = new { Value = property.GetValue(movieDto), English_title = englishTitle };
-                                
-                try
-                {
-                    Console.WriteLine($"Updating column: {property.Name} with value: {placeHolders.Value?.ToString() ?? "NULL"}");
-
-                    rowsUpdated += await _db.ExecuteAsync(updateQuery, placeHolders);
-                }
-                catch (Exception ex)
-                {
-                    throw new Exception(ex.Message);
-                }
-
-                
+                MoviePostPut movie = _mapper.Map<MoviePostPut>(omdbMovie);
+                return movie;
             }
-            return rowsUpdated;
+
+            return null;
+
         }
 
+        //public async Task<int> UpdateMovie(int? movieId, MoviePostPut MovieNewData)
+        //{
+        //    MovieDtoPostPut movieDtoNewData = ConvertMoviePostToMovieDtoPost(MovieNewData);
 
+        //    return 1;
+
+        //    //PropertyInfo[] properties = movieDtoNewData.GetType()
+        //    //                                .GetProperties(BindingFlags.Public | BindingFlags.Instance)
+        //    //                                .Where(prop => prop.GetValue(movieDtoNewData) != null).ToArray();
+            
+        //    //int rowsUpdated = 0;
+        //    //foreach (var property in properties)
+        //    //{
+        //    //    string updateQuery = $"UPDATE movies SET @Column = @Value WHERE english_title = @English_title;";
+
+        //    //    var placeHolders = new { Value = property.GetValue(movieDtoNewData), English_title = englishTitle, Column = property.Name.ToLower() };
+                                
+        //    //    try
+        //    //    {
+        //    //        Console.WriteLine($"Updating column: {property.Name.ToLower()} with value: {placeHolders.Value?.ToString() ?? "NULL"}");
+
+        //    //        rowsUpdated += await _db.ExecuteAsync(updateQuery, placeHolders);
+
+        //    //        Console.WriteLine("Currently updated rows: " + rowsUpdated);
+        //    //    }
+        //    //    catch (Exception ex)
+        //    //    {                    
+        //    //        Console.WriteLine($"Could not update column {property.Name.ToLower()}. Exception: {ex.Message}");
+        //    //    }
+                                
+        //    //}
+        //    //return rowsUpdated;
+        //}
+                
+        public async Task UpdateMovieInDb(int? movieId, MoviePostPut MovieNewData)
+        {
+            MovieDtoPostPut movieDtoNewData = ConvertMoviePostToMovieDtoPost(MovieNewData);
+
+            string updateQuery = CustomSqlServices.CreateUpdateQueryStringFromObject(movieDtoNewData, "movies", $"movie_id = {movieId}");
+
+            int rowsUpdated = 0;
+            rowsUpdated = await _db.ExecuteAsync(updateQuery, movieDtoNewData);
+        }
 
     }
 }

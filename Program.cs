@@ -12,12 +12,6 @@ using System.Web;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Configuration
-    .SetBasePath(Directory.GetCurrentDirectory())
-    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-    .AddJsonFile("appsettings.Local.json", optional: true, reloadOnChange: true);
-    //.AddEnvironmentVariables();
-
 builder.Services.AddAutoMapper(typeof(Program));
 
 builder.Services.AddCors(options =>
@@ -38,6 +32,7 @@ builder.Configuration
 
 // Add services to the container.
 builder.Services.AddControllers();
+builder.Services.AddControllers().AddNewtonsoftJson();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
