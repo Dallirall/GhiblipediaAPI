@@ -16,9 +16,8 @@ namespace GhiblipediaAPI.Data
 
         public MoviePostPut ConvertMovieGetToMoviePost(MovieGet movieGet);
 
-        //public Task<int> UpdateMovie(int? movieId, MoviePostPut MovieDataToUpdate);
-
         public Task UpdateMovieInDb(int? movieId, MoviePostPut movie);
 
+        Task<string?> GetFullPlot(string englishTitle);
     }
 }

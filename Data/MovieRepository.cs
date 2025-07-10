@@ -79,7 +79,7 @@ namespace GhiblipediaAPI.Data
 
         public async Task<MovieGet> GetMovieByTitle(string englishTitle)
         {
-            string sqlQuery = $"SELECT * FROM movies WHERE english_title = @english_title;";
+            string sqlQuery = $"SELECT * FROM movies WHERE LOWER(english_title) = LOWER(@english_title);";
 
 
             try
@@ -160,7 +160,10 @@ namespace GhiblipediaAPI.Data
             rowsUpdated = await _db.ExecuteAsync(updateQuery, movieDtoNewData);
         }
 
-        
+        public async Task<string?> GetFullPlot(string englishTitle)
+        {
+            return await _omdbAPI.GetOmdbFullPlot(englishTitle);
+        }
 
     }
 }
