@@ -16,7 +16,7 @@ namespace GhiblipediaAPI.Services
         }
 
         public async Task<OmdbMovie> GetOmdbMovie(string movieTitle)
-        {            
+        {  
             string url = $"http://www.omdbapi.com/?apikey={_apiKey}&t={movieTitle}";
 
             var movieData = await GetMovieDataAsync(url);
@@ -24,6 +24,22 @@ namespace GhiblipediaAPI.Services
             if (movie.Title != null)
             {
                 return movie;
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        public async Task<string?> GetOmdbFullPlot(string movieTitle)
+        {
+            string url = $"http://www.omdbapi.com/?apikey={_apiKey}&t={movieTitle}&plot=full";
+            
+            var movieData = await GetMovieDataAsync(url);
+            OmdbMovie movie = JsonConvert.DeserializeObject<OmdbMovie>(movieData.ToString());
+            if (movie.Title != null)
+            {
+                return movie.Plot;
             }
             else
             {
@@ -52,6 +68,6 @@ namespace GhiblipediaAPI.Services
                 return null;
             }
         }
-
+       
     }
 }
