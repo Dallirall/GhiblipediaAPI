@@ -32,16 +32,22 @@ URL for api calls to the service hosted on Render: https://ghiblipediaapi.onrend
 - api/movies/omdb/{englishTitle} - Adds a movie object to the database using available data fetched from omdbapi.com.
   > _Ex: POST /api/movies/omdb/spirited%20away_
 
-  **PUT Functions:**
+<br>
+<br>
+
+**PUT Functions:**
 
 <br>
 
 - /api/movies/{englishTitle} - Edit a movie object in database. Add whichever property you wish, and omit those you won't update. Use the .json template ("Database_insert_template" on Trello) for all the available object properties.
   > _Ex: PUT /api/movies/spirited%20away_<br> _{"japaneseTitle": "千と千尋の神隠し Sen to Chihiro no Kamikakushi","tags": ["Mythology", "Supernatural"]}_
 
-  **PATCH Functions:**
+<br>
+<br>
+
+ **PATCH Functions:**
 
 <br>
 
 - /api/movies/{englishTitle} - Edit a movie object in database using Json Patch.
-  > _Ex: PUT /api/movies/Howl's%20Moving%20Castle_<br> _[{"op": "add", "path": "/JapaneseTitle", "value" : "ハウルの動く城 Hauru no Ugoku Shiro"}]
+  > _Ex: PUT /api/movies/Howl's%20Moving%20Castle_<br> _[{"op": "add", "path": "/JapaneseTitle", "value" : "ハウルの動く城 Hauru no Ugoku Shiro"}]_
