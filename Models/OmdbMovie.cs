@@ -12,6 +12,7 @@
         public string? Writer { get; set; }
         public string? Actors { get; set; }
         public string? Plot { get; set; }
+        public string? FullPlot { get; set; }
         public string? Language { get; set; }
         public string? Country { get; set; }
         public string? Awards { get; set; }

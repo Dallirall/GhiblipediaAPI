@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Reflection;
 using System.Transactions;
+using System.Linq;
 
 namespace GhiblipediaAPI.Data
 {
@@ -78,7 +79,7 @@ namespace GhiblipediaAPI.Data
 
         public async Task<MovieGet> GetMovieByTitle(string englishTitle)
         {
-            string sqlQuery = $"SELECT * FROM movies WHERE english_title = @english_title;";
+            string sqlQuery = $"SELECT * FROM movies WHERE LOWER(english_title) = LOWER(@english_title);";
 
 
             try
@@ -137,6 +138,8 @@ namespace GhiblipediaAPI.Data
         {
             OmdbMovie omdbMovie = await _omdbAPI.GetOmdbMovie(englishTitle);
 
+            omdbMovie.FullPlot = await _omdbAPI.GetOmdbFullPlot(englishTitle);
+
             if (omdbMovie != null)
             {
                 MoviePostPut movie = _mapper.Map<MoviePostPut>(omdbMovie);
@@ -147,40 +150,6 @@ namespace GhiblipediaAPI.Data
 
         }
 
-        //public async Task<int> UpdateMovie(int? movieId, MoviePostPut MovieNewData)
-        //{
-        //    MovieDtoPostPut movieDtoNewData = ConvertMoviePostToMovieDtoPost(MovieNewData);
-
-        //    return 1;
-
-        //    //PropertyInfo[] properties = movieDtoNewData.GetType()
-        //    //                                .GetProperties(BindingFlags.Public | BindingFlags.Instance)
-        //    //                                .Where(prop => prop.GetValue(movieDtoNewData) != null).ToArray();
-            
-        //    //int rowsUpdated = 0;
-        //    //foreach (var property in properties)
-        //    //{
-        //    //    string updateQuery = $"UPDATE movies SET @Column = @Value WHERE english_title = @English_title;";
-
-        //    //    var placeHolders = new { Value = property.GetValue(movieDtoNewData), English_title = englishTitle, Column = property.Name.ToLower() };
-                                
-        //    //    try
-        //    //    {
-        //    //        Console.WriteLine($"Updating column: {property.Name.ToLower()} with value: {placeHolders.Value?.ToString() ?? "NULL"}");
-
-        //    //        rowsUpdated += await _db.ExecuteAsync(updateQuery, placeHolders);
-
-        //    //        Console.WriteLine("Currently updated rows: " + rowsUpdated);
-        //    //    }
-        //    //    catch (Exception ex)
-        //    //    {                    
-        //    //        Console.WriteLine($"Could not update column {property.Name.ToLower()}. Exception: {ex.Message}");
-        //    //    }
-                                
-        //    //}
-        //    //return rowsUpdated;
-        //}
-                
         public async Task UpdateMovieInDb(int? movieId, MoviePostPut MovieNewData)
         {
             MovieDtoPostPut movieDtoNewData = ConvertMoviePostToMovieDtoPost(MovieNewData);
@@ -189,6 +158,11 @@ namespace GhiblipediaAPI.Data
 
             int rowsUpdated = 0;
             rowsUpdated = await _db.ExecuteAsync(updateQuery, movieDtoNewData);
+        }
+
+        public async Task<string?> GetFullPlot(string englishTitle)
+        {
+            return await _omdbAPI.GetOmdbFullPlot(englishTitle);
         }
 
     }

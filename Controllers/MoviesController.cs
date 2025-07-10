@@ -196,6 +196,26 @@ namespace GhiblipediaAPI.Controllers
 
         }
 
+        [HttpPut]
+        [Route("omdbPlot/{englishTitle}")]
+        public async Task<IActionResult> UpdatePlotFromOmbd(string englishTitle)
+        {
+            if (englishTitle == null) return UnprocessableEntity();
+            
+            MovieGet movieFromDb = await _movieRepo.GetMovieByTitle(englishTitle);
+            if (movieFromDb == null)
+            {
+                Console.WriteLine($"The movie {englishTitle} does not yet exist in database. ");
+                return BadRequest();
+            }
+
+            MoviePostPut movie = new MoviePostPut();
+
+            movie.Plot = await _movieRepo.GetFullPlot(englishTitle);
+
+            return await UpdateMovieByTitle(englishTitle, movie);
+        }
+
     }
 }
 //[ProducesResponseType<T>(StatusCodes.Status200OK)]
