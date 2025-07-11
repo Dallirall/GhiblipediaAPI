@@ -58,7 +58,7 @@ namespace GhiblipediaAPI.Services
                     RequestUri = new Uri(url),
                 });
 
-                response.EnsureSuccessStatusCode(); // Throw if not a success code.
+                response.EnsureSuccessStatusCode();
 
                 return await response.Content.ReadAsStringAsync();                
             }
