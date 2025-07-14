@@ -18,7 +18,7 @@ builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
     {
-        policy.WithOrigins("http://localhost:5173", "https://ghiblipedia.onrender.com") // Frontend URL
+        policy.WithOrigins("https://localhost:5173", "https://ghiblipedia.onrender.com") // Frontend URL
               .AllowAnyHeader()
               .AllowAnyMethod();
     });

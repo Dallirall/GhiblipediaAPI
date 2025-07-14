@@ -6,8 +6,7 @@ namespace GhiblipediaAPI.Services
     {
 
         public static string CreateInsertQueryStringFromObject(object obj, string tableName)
-        {
-            //TODO Dubbelkolla denna 
+        {           
             
             PropertyInfo[] propertyInfo = obj.GetType()
                                                     .GetProperties(BindingFlags.Public | BindingFlags.Instance)
@@ -59,22 +58,6 @@ namespace GhiblipediaAPI.Services
             }
 
             return query;
-
-            //int i = 0;
-            //string query = $"UPDATE {tableName} SET ";
-            //do
-            //{
-            //    query += $"{propertyInfo[i].Name} = @{propertyInfo[i].Name}";
-
-            //    i++;
-
-            //    if (i == propertyInfo.Length)
-            //        break;
-
-            //    query += " , ";
-
-            //} while (i < propertyInfo.Length);
-            //query += $" WHERE {conditionColumn} = {conditionValue};";
 
         }
 

@@ -96,10 +96,6 @@ namespace GhiblipediaAPI.Data
             }
         }
 
-
-
-        //Den här metoden hade kunnat vara bra att unit testa ev.
-
         public async Task<bool> PostMovieInDB(MoviePostPut movie)
         {
             bool isSuccess = false;
@@ -164,6 +160,5 @@ namespace GhiblipediaAPI.Data
         {
             return await _omdbAPI.GetOmdbFullPlot(englishTitle);
         }
-
     }
 }

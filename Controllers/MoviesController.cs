@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
-using System.Threading.Tasks; //Behövs denna?
+using System.Threading.Tasks;
 
 namespace GhiblipediaAPI.Controllers
 {
@@ -70,8 +70,8 @@ namespace GhiblipediaAPI.Controllers
             }
         }
 
-
-        //api/movies/{englishTitle}/fullplot || api/movies/{englishTitle}/summary (ex: GET api/movies/spirited%20away/fullplot)
+        //Propably unnecessary method. Delete in future if not needed.
+        //api/movies/{englishTitle}/fullplot OR api/movies/{englishTitle}/summary (ex: GET api/movies/spirited%20away/fullplot)
         [HttpGet]
         [Route("{englishTitle}/{plotType}")]
         public async Task<ActionResult<MovieGet>> GetFullPlotOrSummary(string englishTitle, string plotType)
@@ -107,7 +107,7 @@ namespace GhiblipediaAPI.Controllers
         }
 
         [HttpPost]
-        [Route("omdb/{englishTitle}")] //Borde routen göras på annat sätt?
+        [Route("omdb/{englishTitle}")]
         public async Task<IActionResult> PostMovieInDBWithDataFromOmdb(string englishTitle)
         {
             if (englishTitle == null) return UnprocessableEntity();
@@ -175,6 +175,7 @@ namespace GhiblipediaAPI.Controllers
             return Ok();
         }
 
+        //Possibly unnecessary method. Delete in future if not needed.
         [HttpPatch]
         [Route("{englishTitle}")]
         public async Task<IActionResult> PatchMovie(string englishTitle, [FromBody] JsonPatchDocument<MovieGet> patchDoc)
@@ -196,6 +197,8 @@ namespace GhiblipediaAPI.Controllers
 
         }
 
+        //Possibly unnecessary method. Delete in future if not needed.
+        //For updating the 'plot' field of an existing object in the database with the full plot parameter from OMDb.
         [HttpPut]
         [Route("omdbPlot/{englishTitle}")]
         public async Task<IActionResult> UpdatePlotFromOmbd(string englishTitle)
@@ -218,50 +221,3 @@ namespace GhiblipediaAPI.Controllers
 
     }
 }
-//[ProducesResponseType<T>(StatusCodes.Status200OK)]
-//[ProducesResponseType(StatusCodes.Status404NotFound)]
-
-//Felhantering??
-//[Route("{englishTitle}/{fields}")]
-//public IActionResult GetMovieSpecificFields(string englishTitle, string fields)
-//{
-//    var movie = _movieRepo.GetMovieByTitle(englishTitle);
-//    if (movie == null) return NotFound();
-
-//    var fieldList = fields?.Split(',', StringSplitOptions.RemoveEmptyEntries);
-//    if (fieldList == null || fieldList.Length == 0)
-//        return Ok(movie);
-
-//    var result = new Dictionary<string, object>();
-//    foreach (var field in fieldList)
-//    {
-//        switch (field.Trim().ToLower())
-//        {
-//            case "movie_id":
-//                result["movie_id"] = movie.MovieId; break;
-//            case "english_title":
-//                result["english_title"] = movie.EnglishTitle; break;
-//            case "japanese_title":
-//                result["japanese_title"] = movie.JapaneseTitle; break;
-//            case "release_year":
-//                result["release_year"] = movie.ReleaseYear; break;
-//            case "image_url":
-//                result["image_url"] = movie.ImageUrl; break;
-//            case "trailer_url":
-//                result["trailer_url"] = movie.TrailerUrl; break;
-//            case "summary":
-//                result["summary"] = movie.Summary; break;
-//            case "plot":
-//                result["plot"] = movie.Plot; break;
-//            case "director":
-//                result["director"] = movie.Director; break;
-//            case "genre":
-//                result["genre"] = movie.Genre; break;
-//            case "running_time_mins":
-//                result["running_time_mins"] = movie.RunningTimeMins; break;
-//            default: break;
-//        }
-//    }
-
-//    return Ok(result);
-//}
