@@ -58,16 +58,17 @@ if (string.IsNullOrEmpty(connectionString))
 var jwtAuth = builder.Configuration["Jwt:JwtAuthority"]; 
 Console.WriteLine("Added authority " + jwtAuth);
 
-builder.Services.AddAuthentication(options =>
-{
-    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-}).AddJwtBearer(options =>
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
 {
     options.Authority = jwtAuth;
     options.Audience = "https://ghiblipediaapi.onrender.com";
 });
 
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("AdminOnly", policy =>
+    policy.RequireRole("admin"));
+});
 
 builder.Services.AddScoped<IDbConnection>(sp =>
     new NpgsqlConnection(connectionString));

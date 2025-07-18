@@ -1,5 +1,6 @@
 ﻿using GhiblipediaAPI.Data;
 using GhiblipediaAPI.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
@@ -8,6 +9,7 @@ using System.Threading.Tasks;
 
 namespace GhiblipediaAPI.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api/[controller]/")] //Sets the default route for API call URLs to /api/Movies/
     public class MoviesController : ControllerBase
@@ -70,6 +72,7 @@ namespace GhiblipediaAPI.Controllers
         //Insert a movie object with data from the JSON body into database. Use when you want to assign your own values to the object properties.
         [HttpPost]
         [Route("")]
+        [Authorize(Policy = "AdminOnly")]
         public async Task<IActionResult> PostMovie([FromBody] MoviePostPut movie)
         {
             if (movie == null) return UnprocessableEntity(); 
@@ -86,6 +89,7 @@ namespace GhiblipediaAPI.Controllers
         //Searches OMDb API for the specified movie. Inserts that movie into database, assigning the retrieved data from OMDb to the corresponding database columns. 
         [HttpPost]
         [Route("omdb/{englishTitle}")]
+        [Authorize(Policy = "AdminOnly")]
         public async Task<IActionResult> PostMovieInDBWithDataFromOmdb(string englishTitle)
         {
             if (englishTitle == null) return UnprocessableEntity();
@@ -106,6 +110,7 @@ namespace GhiblipediaAPI.Controllers
         //Update a movie in database. Caller can omit fields in the request body if those should not be updated.
         [HttpPut]
         [Route("{englishTitle}")]
+        [Authorize(Policy = "AdminOnly")]
         public async Task<IActionResult> UpdateMovieByTitle(string englishTitle, [FromBody] MoviePostPut MovieNewData)
         {
             if (MovieNewData == null) return UnprocessableEntity();
@@ -132,6 +137,7 @@ namespace GhiblipediaAPI.Controllers
         //Update a movie in database. Caller can omit fields in the request body if those should not be updated.
         [HttpPut]
         [Route("{movieID:int}")]
+        [Authorize(Policy = "AdminOnly")]
         public async Task<IActionResult> UpdateMovieById(int movieID, [FromBody] MoviePostPut MovieNewData)
         {
             if (MovieNewData == null) return UnprocessableEntity();
@@ -159,6 +165,7 @@ namespace GhiblipediaAPI.Controllers
         //Updates a movie in the database using JSON Patch. (Fetches the movie from database, applies the operation specified in patchDoc and updated it in database).
         [HttpPatch]
         [Route("{englishTitle}")]
+        [Authorize(Policy = "AdminOnly")]
         public async Task<IActionResult> PatchMovie(string englishTitle, [FromBody] JsonPatchDocument<MovieGet> patchDoc)
         {
             if (patchDoc == null)
@@ -182,6 +189,7 @@ namespace GhiblipediaAPI.Controllers
         //For updating the 'plot' field of an existing object in the database with the full plot parameter from OMDb.
         [HttpPut]
         [Route("omdbPlot/{englishTitle}")]
+        [Authorize(Policy = "AdminOnly")]
         public async Task<IActionResult> UpdatePlotFromOmbd(string englishTitle)
         {
             if (englishTitle == null) return UnprocessableEntity();

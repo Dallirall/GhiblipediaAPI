@@ -24,7 +24,7 @@ At the moment of writing, we use the free-tier, which comes with some restrictio
 
 - __Auth0:__ We use Auth0 for handling login and user accounts. 
 
-- __REST API (ASP.NET Core):__ This API is a REST API made in ASP .NET Core. The aim is for the API to handle all business logic, data processing, and communication with the database and external services. 
+- __REST API (ASP.NET Core):__ This API is a REST API made in ASP.NET Core. The aim is for the API to handle all business logic, data processing, and communication with the database and external services. 
 (Some features of the web page however might be more practical to program in the frontend, such as search boxes).
 The API is structured with Controllers, Data (business logic), Models (DTOs/model classes), and Services (custom logic, external API connections).
 
