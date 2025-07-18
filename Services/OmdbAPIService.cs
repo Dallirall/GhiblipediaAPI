@@ -4,6 +4,7 @@ using Newtonsoft.Json;
 
 namespace GhiblipediaAPI.Services
 {
+    //For transactions between this API and OMDb API
     public class OmdbAPIService
     {
         private static readonly HttpClient client = new HttpClient();
@@ -47,7 +48,7 @@ namespace GhiblipediaAPI.Services
             }
         }
 
-
+        //Sends a GET request to OMDb API and returns the JSON response as a string.
         public async Task<string> GetMovieDataAsync(string url)
         {
             try

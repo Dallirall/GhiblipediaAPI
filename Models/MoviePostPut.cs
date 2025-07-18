@@ -1,5 +1,6 @@
 ﻿namespace GhiblipediaAPI.Models
 {
+    //Data model for HttpPost, HttpPut and HttpPatch requests from frontend.
     public class MoviePostPut
     {
         private string[]? _tags;
@@ -14,6 +15,10 @@
         public string? Director { get; set; }
         public string? Genre { get; set; }
         public string? RunningTime { get; set; }
+
+        /*When mapping from the JSON body, an empty 'Tags' field is stored as an empty array in the Tags property,
+        which risks unintentional overwriting of existing values on HttpPut requests. 
+        That's why I make sure to null the value in these cases.*/
         public string[]? Tags 
         { 
             get 

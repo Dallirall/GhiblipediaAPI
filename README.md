@@ -81,12 +81,20 @@ and another class for HttpPost's and Put's, where only writable fields are inclu
 The properties of these classes are in the camel case standard (e.g. EnglishTitle), but because I use the property names to create custom dynamic SQL, I needed the property names as they are in the db table too, 
 which is why I made the Dto classes (MovieDtoGet corresponds to MovieGet, etc), and convert between the models using Automapper (the mapping is done in MappingProfile.cs).
 The OmdbMovie class has properties corresponding to the JSON object got from the API call to OMDb API.
+- __Dependencies (some of them):__ 
+	- ORM: Dapper
+	- Object-to-object mapper: Automapper
+	- Npgsql: .NET Data provider for PostgreSQL
+	- Microsoft.AspNetCore.JsonPatch: Support for JSON Patch, though the HttpPatch endpoint might be unnecessary.
+	- Microsoft.AspNetCore.Authentication.JwtBearer: The work on authentication and security is still in progress. It's unclear if this package is needed.
 
 
 ### Good to know 
 Here are some notes about things you might want to know.
 
 - For questions about login credentials, or anything in general, ask AMD-93.
+- I have little knowledge about the proper use of HTTP status codes, so I have likely used the wrong status code at the wrong place in many cases. 
+Feel free to correct this.
 - ToDo's and other resources are on the project's Trello page.
 
 

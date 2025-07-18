@@ -1,5 +1,6 @@
 ﻿namespace GhiblipediaAPI.Models
 {
+    //Objects to insert or update into the 'movies' database table are mapped to this class.
     public class MovieDtoPostPut
     {        
         public string? English_title { get; set; }

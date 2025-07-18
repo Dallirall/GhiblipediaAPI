@@ -5,6 +5,7 @@ namespace GhiblipediaAPI
 {
     public class MappingProfile : Profile
     {
+        //This is where I have mapped between the model dto classes.
         public MappingProfile()
         {
             CreateMap<MovieDtoGet, MovieGet>()

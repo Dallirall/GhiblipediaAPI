@@ -10,6 +10,7 @@ using System.Linq;
 
 namespace GhiblipediaAPI.Data
 {
+    //Class for all business logic on the database's 'movies' table.
     public class MovieRepository : IMovieRepository
     {
         private readonly IDbConnection _db;
@@ -23,6 +24,7 @@ namespace GhiblipediaAPI.Data
             _omdbAPI = omdbAPI;
         }
 
+        //These convert methods uses Automapper to convert between the data model classes and the DTO classes
         public MovieGet ConvertMovieDtoToMovieGet(MovieDtoGet dto)
         {
             return _mapper.Map<MovieGet>(dto);
@@ -47,6 +49,7 @@ namespace GhiblipediaAPI.Data
         {
             return _mapper.Map<MoviePostPut>(movieGet);
         }
+
 
         public async Task<IEnumerable<MovieGet>> GetAllMovies()
         {
@@ -80,7 +83,6 @@ namespace GhiblipediaAPI.Data
         public async Task<MovieGet> GetMovieByTitle(string englishTitle)
         {
             string sqlQuery = $"SELECT * FROM movies WHERE LOWER(english_title) = LOWER(@english_title);";
-
 
             try
             {
@@ -130,6 +132,7 @@ namespace GhiblipediaAPI.Data
             return isSuccess; 
         }
 
+        //Fetches a movie called {englishTitle} from OMDb API and maps the retrieved data to a MoviePostPut object.
         public async Task<MoviePostPut> ConvertOmdbMovieToMoviePost(string englishTitle)
         {
             OmdbMovie omdbMovie = await _omdbAPI.GetOmdbMovie(englishTitle);
@@ -143,9 +146,9 @@ namespace GhiblipediaAPI.Data
             }
 
             return null;
-
         }
 
+        //Updates the specified movie in the database with the populated properties of the passed MovieNewData object.
         public async Task UpdateMovieInDb(int? movieId, MoviePostPut MovieNewData)
         {
             MovieDtoPostPut movieDtoNewData = ConvertMoviePostToMovieDtoPost(MovieNewData);
@@ -156,6 +159,7 @@ namespace GhiblipediaAPI.Data
             rowsUpdated = await _db.ExecuteAsync(updateQuery, movieDtoNewData);
         }
 
+        //Fetches the full plot data of a movie from OMDb API.
         public async Task<string?> GetFullPlot(string englishTitle)
         {
             return await _omdbAPI.GetOmdbFullPlot(englishTitle);

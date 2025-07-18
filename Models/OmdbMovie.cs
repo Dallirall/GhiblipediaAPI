@@ -1,5 +1,6 @@
 ﻿namespace GhiblipediaAPI.Models
 {
+    //Data model for objects retrieved from OMDb API.
     public class OmdbMovie
     {
         public string? Title { get; set; }
