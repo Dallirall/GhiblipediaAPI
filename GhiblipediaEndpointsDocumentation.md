@@ -16,9 +16,7 @@ URL for api calls to the service hosted on Render: https://ghiblipediaapi.onrend
   > _Ex: GET api/movies/1_
 - /api/movies/{englishTitle} - Gets a movie object from database, by its english title. (Write spaces with '%20')
   > _Ex: GET api/movies/spirited%20away_
-- /api/movies/{englishTitle}/fullplot
-- /api/movies/{englishTitle}/summary - Returns movie by {englishTitle} parameter, and either the full plot or the short summary.
-  > _Ex: GET api/movies/spirited%20away/fullplot_
+
 
 <br>
 <br>

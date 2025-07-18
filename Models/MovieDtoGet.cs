@@ -1,5 +1,6 @@
 ﻿namespace GhiblipediaAPI.Models
 {
+    //Objects from the 'movies' database table are mapped to this class. 
     public class MovieDtoGet
     {
         public int? Movie_id { get; set; } 
