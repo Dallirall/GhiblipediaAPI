@@ -7,11 +7,11 @@ namespace GhiblipediaAPI.Services
     {
         //Returns an INSERT SQL string for the passed object's properties that have assigned values. The values are in the form of placeholders ('@Value').
         public static string CreateInsertQueryStringFromObject(object obj, string tableName)
-        {           
-            //Fixa nåt
+        {
+            //Fixa nåt med prop.CustomAttributes
             PropertyInfo[] propertyInfo = obj.GetType()
                                                     .GetProperties(BindingFlags.Public | BindingFlags.Instance)
-                                                    .Where(prop => prop.CustomAttributes.GetValue(obj) != null).ToArray();
+                                                    .Where(prop => prop.GetValue(obj) != null).ToArray();
             List<string> propertyNames = new List<string>();
 
             foreach (PropertyInfo propInf in propertyInfo)
