@@ -176,7 +176,7 @@ namespace GhiblipediaAPI.Controllers
             if (movieFromDb == null)
                 return NotFound();
                         
-            patchDoc.ApplyTo(movieFromDb, ModelState);
+            patchDoc.ApplyTo(movieFromDb);
             
             var updateMovie = _movieRepo.ConvertMovieGetToMoviePost(movieFromDb);
 
