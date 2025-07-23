@@ -107,22 +107,22 @@ namespace GhiblipediaAPI.Data
                 return isSuccess;
             }
             
-            var movieDtoPost = ConvertMoviePostToMovieDtoPost(movie);
+            //var movieDtoPost = ConvertMoviePostToMovieDtoPost(movie);
 
-            var existingMovie = await GetMovieByTitle(movieDtoPost.English_title);
+            var existingMovie = await GetMovieByTitle(movie.EnglishTitle);
 
             if (existingMovie != null)
             {
-                Console.WriteLine($"The movie '{movieDtoPost.English_title}' already exists in database. ");
+                Console.WriteLine($"The movie '{movie.EnglishTitle}' already exists in database. ");
                 return isSuccess;
             }
 
-            string sqlQuery = CustomSqlServices.CreateInsertQueryStringFromObject(movieDtoPost, "movies");
+            string sqlQuery = CustomSqlServices.CreateInsertQueryStringFromDTO(movie, "movies");
 
             try
             {
                 Console.WriteLine("Inserting into database... ");
-                await _db.ExecuteAsync(sqlQuery, movieDtoPost);
+                await _db.ExecuteAsync(sqlQuery, movie);
                 isSuccess = true;
             }
             catch (Exception ex)
