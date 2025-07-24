@@ -1,36 +1,37 @@
 ﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace GhiblipediaAPI.Models
 {
     //Data model for HttpGet requests from frontend.
     public class MovieGet
     {
-        [JsonProperty("movie_id")]
+        [JsonPropertyName("movie_id")]
         public int? MovieId { get; private set; }
-        [JsonProperty("created_at")]
+        [JsonPropertyName("created_at")]
         public DateTime? CreatedAt { get; set; }
-        [JsonProperty("english_title")]
+        [JsonPropertyName("english_title")]
         public string? EnglishTitle { get; set; }
-        [JsonProperty("japanese_title")]
+        [JsonPropertyName("japanese_title")]
         public string? JapaneseTitle { get; set; }
-        [JsonProperty("release_date")]
+        [JsonPropertyName("release_date")]
         public string? ReleaseDate { get; set; }
-        [JsonProperty("image_url")]
+        [JsonPropertyName("image_url")]
         public string? ImageUrl { get; set; }
-        [JsonProperty("trailer_url")]
+        [JsonPropertyName("trailer_url")]
         public string? TrailerUrl { get; set; }
-        [JsonProperty("summary")]
+        [JsonPropertyName("summary")]
         public string? Summary { get; set; }
-        [JsonProperty("plot")]
+        [JsonPropertyName("plot")]
         public string? Plot { get; set; }
-        [JsonProperty("director")]
+        [JsonPropertyName("director")]
         public string? Director { get; set; }
-        [JsonProperty("genre")]
+        [JsonPropertyName("genre")]
         public string? Genre { get; set; }
-        [JsonProperty("running_time")]
+        [JsonPropertyName("running_time")]
         public string? RunningTime { get; set; }
-        [JsonProperty("tags")]
+        [JsonPropertyName("tags")]
         public string[]? Tags { get; set; }
     }
 }
