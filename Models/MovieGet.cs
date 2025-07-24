@@ -1,7 +1,10 @@
+
 ﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
+﻿using Newtonsoft.Json;
+
 
 namespace GhiblipediaAPI.Models
 {
@@ -9,8 +12,9 @@ namespace GhiblipediaAPI.Models
     //[Table("movies")]
     public class MovieGet
     {
+
         //[JsonPropertyName("movie_id")]
-        public int? MovieId { get; private set; }
+        public int? MovieId { get; set; }
         //[JsonPropertyName("created_at")]
         public DateTime? CreatedAt { get; set; }
         //[JsonPropertyName("english_title")]
