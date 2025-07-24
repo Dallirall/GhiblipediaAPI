@@ -132,7 +132,7 @@ namespace GhiblipediaAPI.Data
             return isSuccess; 
         }
 
-        //Fetches a movie called {englishTitle} from OMDb API and maps the retrieved data to a MoviePostPut object.
+        //Fetches the specified movie from OMDb API and maps the retrieved data to a MoviePostPut DTO.
         public async Task<MoviePostPut> ConvertOmdbMovieToMoviePost(string englishTitle)
         {
             OmdbMovie omdbMovie = await _omdbAPI.GetOmdbMovie(englishTitle);
@@ -153,7 +153,7 @@ namespace GhiblipediaAPI.Data
         {
             MovieDtoPostPut movieDtoNewData = ConvertMoviePostToMovieDtoPost(MovieNewData);
 
-            string updateQuery = CustomSqlServices.CreateUpdateQueryStringFromObject(movieDtoNewData, "movies", $"movie_id = {movieId}");
+            string updateQuery = CustomSqlServices.CreateUpdateQueryStringFromDTO(movieDtoNewData, "movies", $"movie_id = {movieId}");
 
             int rowsUpdated = 0;
             rowsUpdated = await _db.ExecuteAsync(updateQuery, movieDtoNewData);
