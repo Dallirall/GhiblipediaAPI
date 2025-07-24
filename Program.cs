@@ -14,7 +14,7 @@ using System.Web;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddAutoMapper(typeof(Program)); //For mapping between dto classes.
+builder.Services.AddAutoMapper(typeof(Program)); //For mapping between movie classes.
 
 builder.Services.AddCors(options =>
 {
@@ -78,6 +78,8 @@ builder.Services.Configure<OmdbAPIOptions>(builder.Configuration.GetSection("Omd
 builder.Services.AddTransient<OmdbAPIService>();
 
 builder.Services.AddTransient<IMovieRepository, MovieRepository>();
+
+Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true; //For mapping purposes when using Dapper
 
 var app = builder.Build();
 
