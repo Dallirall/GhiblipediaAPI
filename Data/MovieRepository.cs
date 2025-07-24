@@ -107,22 +107,22 @@ namespace GhiblipediaAPI.Data
                 return isSuccess;
             }
             
-            var movieDtoPost = ConvertMoviePostToMovieDtoPost(movie);
+            //var movieDtoPost = ConvertMoviePostToMovieDtoPost(movie);
 
-            var existingMovie = await GetMovieByTitle(movieDtoPost.English_title);
+            var existingMovie = await GetMovieByTitle(movie.EnglishTitle);
 
             if (existingMovie != null)
             {
-                Console.WriteLine($"The movie '{movieDtoPost.English_title}' already exists in database. ");
+                Console.WriteLine($"The movie '{movie.EnglishTitle}' already exists in database. ");
                 return isSuccess;
             }
 
-            string sqlQuery = CustomSqlServices.CreateInsertQueryStringFromObject(movieDtoPost, "movies");
+            string sqlQuery = CustomSqlServices.CreateInsertQueryStringFromDTO(movie, "movies");
 
             try
             {
                 Console.WriteLine("Inserting into database... ");
-                await _db.ExecuteAsync(sqlQuery, movieDtoPost);
+                await _db.ExecuteAsync(sqlQuery, movie);
                 isSuccess = true;
             }
             catch (Exception ex)
@@ -132,7 +132,7 @@ namespace GhiblipediaAPI.Data
             return isSuccess; 
         }
 
-        //Fetches a movie called {englishTitle} from OMDb API and maps the retrieved data to a MoviePostPut object.
+        //Fetches the specified movie from OMDb API and maps the retrieved data to a MoviePostPut DTO.
         public async Task<MoviePostPut> ConvertOmdbMovieToMoviePost(string englishTitle)
         {
             OmdbMovie omdbMovie = await _omdbAPI.GetOmdbMovie(englishTitle);
@@ -148,15 +148,15 @@ namespace GhiblipediaAPI.Data
             return null;
         }
 
-        //Updates the specified movie in the database with the populated properties of the passed MovieNewData object.
-        public async Task UpdateMovieInDb(int? movieId, MoviePostPut MovieNewData)
+        //Updates the specified movie in the database with the populated properties of the passed movieNewData object.
+        public async Task UpdateMovieInDb(int? movieId, MoviePostPut movieNewData)
         {
-            MovieDtoPostPut movieDtoNewData = ConvertMoviePostToMovieDtoPost(MovieNewData);
+            //MovieDtoPostPut movieDtoNewData = ConvertMoviePostToMovieDtoPost(MovieNewData);
 
-            string updateQuery = CustomSqlServices.CreateUpdateQueryStringFromObject(movieDtoNewData, "movies", $"movie_id = {movieId}");
+            string updateQuery = CustomSqlServices.CreateUpdateQueryStringFromDTO(movieNewData, "movies", $"movie_id = {movieId}");
 
             int rowsUpdated = 0;
-            rowsUpdated = await _db.ExecuteAsync(updateQuery, movieDtoNewData);
+            rowsUpdated = await _db.ExecuteAsync(updateQuery, movieNewData);
         }
 
         //Fetches the full plot data of a movie from OMDb API.

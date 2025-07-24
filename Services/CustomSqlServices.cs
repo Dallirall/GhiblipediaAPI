@@ -1,27 +1,27 @@
-﻿using System.Reflection;
+﻿using Newtonsoft.Json;
+using System.Reflection;
+using System.Text.Json.Serialization;
 
 namespace GhiblipediaAPI.Services
 {
     //For building SQL strings dynamically. Not tested for security yet.
     public class CustomSqlServices
     {
-        //Returns an INSERT SQL string for the passed object's properties that have assigned values. The values are in the form of placeholders ('@Value').
-        public static string CreateInsertQueryStringFromObject(object obj, string tableName)
+        //Returns an INSERT SQL string for the passed data transfer object's [JsonPropertyName] name value (of properties with assigned values).
+        //The VALUES of the query string are in the form of placeholders ('@Value').
+        public static string CreateInsertQueryStringFromDTO(object dto, string tableName)
         {
-            //Fixa nåt med prop.CustomAttributes
-            PropertyInfo[] propertyInfo = obj.GetType()
-                                                    .GetProperties(BindingFlags.Public | BindingFlags.Instance)
-                                                    .Where(prop => prop.GetValue(obj) != null).ToArray();
-            List<string> propertyNames = new List<string>();
+            PropertyInfo[] propertyInfo = dto.GetType()
+                                             .GetProperties(BindingFlags.Public | BindingFlags.Instance)
+                                             .Where(prop => prop.GetValue(dto) != null).ToArray();
 
-            foreach (PropertyInfo propInf in propertyInfo)
-            {
-                propertyNames.Add(propInf.Name);
-            }
+            List<string> propertyNames = propertyInfo.Select(prop => prop.GetCustomAttribute<JsonPropertyNameAttribute>())
+                                                     .Where(jpa => jpa != null)
+                                                     .Select(jpa => jpa.Name).ToList();
 
             string columnNamesString = string.Join(", ", propertyNames);
 
-            string sqlPlaceHolders = string.Join(", ", propertyNames.Select(prop => "@" + prop));
+            string sqlPlaceHolders = string.Join(", ", propertyInfo.Select(prop => "@" + prop.Name));
 
 
             string query = $"INSERT INTO {tableName} ({columnNamesString}) VALUES ({sqlPlaceHolders})";
@@ -31,22 +31,19 @@ namespace GhiblipediaAPI.Services
 
         //Returns an UPDATE SQL string for the passed object's properties that have assigned values. The values are in the form of placeholders ('@Value').
         //Pass in the 'whereConditionClause' param in this example format: 'id = {obj.Id}'
-        public static string CreateUpdateQueryStringFromObject(object obj, string tableName, string whereConditionClause)
+        public static string CreateUpdateQueryStringFromDTO(object dto, string tableName, string whereConditionClause)
         {            
-            PropertyInfo[] propertyInfo = obj.GetType()
-                                                    .GetProperties(BindingFlags.Public | BindingFlags.Instance)
-                                                    .Where(prop => prop.GetValue(obj) != null).ToArray();
-            List<string> propertyNames = new List<string>();
-                        
-
-            foreach (PropertyInfo propInf in propertyInfo)
-            {
-                propertyNames.Add(propInf.Name);
-            }
+            PropertyInfo[] propertyInfo = dto.GetType()
+                                             .GetProperties(BindingFlags.Public | BindingFlags.Instance)
+                                             .Where(prop => prop.GetValue(dto) != null).ToArray();
+            
+            List<string> propertyNames = propertyInfo.Select(prop => prop.GetCustomAttribute<JsonPropertyNameAttribute>())
+                                                     .Where(jpa => jpa != null)
+                                                     .Select(jpa => jpa.Name).ToList();
 
             string columnNamesString = string.Join(", ", propertyNames);
 
-            string sqlPlaceHolders = string.Join(", ", propertyNames.Select(prop => "@" + prop));
+            string sqlPlaceHolders = string.Join(", ", propertyInfo.Select(prop => "@" + prop.Name));
 
             string query = "";
             if (propertyNames.Count > 1)
