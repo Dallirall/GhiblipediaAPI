@@ -159,31 +159,6 @@ namespace GhiblipediaAPI.Controllers
             return Ok();
         }
 
-        ////Probably unnecessary method. Delete in future if not needed.
-        ////Updates a movie in the database using JSON Patch. (Fetches the movie from database, applies the operation specified in patchDoc and updated it in database).
-        //[HttpPatch]
-        //[Route("{englishTitle}")]
-        //[Authorize(Policy = "AdminOnly")]
-        //public async Task<IActionResult> PatchMovie(string englishTitle, [FromBody] JsonPatchDocument<MovieGet> patchDoc)
-        //{
-        //    if (patchDoc == null)
-        //        return BadRequest();
-
-
-        //    var movieFromDb = await _movieRepo.GetMovieByTitle(englishTitle);
-        //    if (movieFromDb == null)
-        //        return NotFound();
-                        
-        //    patchDoc.ApplyTo(movieFromDb);
-            
-        //    var updateMovie = _movieRepo.ConvertMovieGetToMoviePost(movieFromDb);
-
-        //    await _movieRepo.UpdateMovieInDb(movieFromDb.MovieId, updateMovie);
-        //    return Ok(movieFromDb);
-
-        //}
-
-       
 
     }
 }
