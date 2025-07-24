@@ -15,9 +15,9 @@ namespace GhiblipediaAPI.Data
     {
         private readonly IDbConnection _db;
         private readonly IMapper _mapper;
-        private readonly OmdbAPIService _omdbAPI;
+        private readonly OmdbService _omdbAPI;
 
-        public MovieRepository(IDbConnection db, IMapper mapper, OmdbAPIService omdbAPI)
+        public MovieRepository(IDbConnection db, IMapper mapper, OmdbService omdbAPI)
         {
             _db = db;
             _mapper = mapper;
@@ -55,6 +55,7 @@ namespace GhiblipediaAPI.Data
 
         public async Task<MovieGet> GetMovieByTitle(string englishTitle)
         {
+            //Leta först i engtitle sen japtitle
             string sqlQuery = $"SELECT * FROM movies WHERE LOWER(english_title) = LOWER(@english_title);";
 
             try

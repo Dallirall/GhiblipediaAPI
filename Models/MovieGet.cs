@@ -6,7 +6,8 @@ namespace GhiblipediaAPI.Models
 {
     //Data model for HttpGet requests from frontend.
     public class MovieGet
-    {                
+    {               
+        //Rename to 'id'
         public int? MovieId { get; set; }
         public DateTime? CreatedAt { get; set; }
         public string? EnglishTitle { get; set; }

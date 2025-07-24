@@ -75,7 +75,7 @@ builder.Services.AddScoped<IDbConnection>(sp =>
 
 builder.Services.Configure<OmdbAPIOptions>(builder.Configuration.GetSection("OmdbApi")); //Sets the value to the OMDb API key
 
-builder.Services.AddTransient<OmdbAPIService>();
+builder.Services.AddTransient<OmdbService>();
 
 builder.Services.AddTransient<IMovieRepository, MovieRepository>();
 
@@ -103,11 +103,9 @@ else
     Console.WriteLine("PORT environment variable not set, falling back to default 8080.");
 }
 
-//When deployed on Render.com, this step is unnecessary (as I understand it).
-if (!app.Environment.IsProduction() || app.Environment.IsDevelopment())
-{
-    app.UseHttpsRedirection();
-}
+
+app.UseHttpsRedirection();
+
 
 app.UseCors();
 
