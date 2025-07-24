@@ -148,15 +148,15 @@ namespace GhiblipediaAPI.Data
             return null;
         }
 
-        //Updates the specified movie in the database with the populated properties of the passed MovieNewData object.
-        public async Task UpdateMovieInDb(int? movieId, MoviePostPut MovieNewData)
+        //Updates the specified movie in the database with the populated properties of the passed movieNewData object.
+        public async Task UpdateMovieInDb(int? movieId, MoviePostPut movieNewData)
         {
-            MovieDtoPostPut movieDtoNewData = ConvertMoviePostToMovieDtoPost(MovieNewData);
+            //MovieDtoPostPut movieDtoNewData = ConvertMoviePostToMovieDtoPost(MovieNewData);
 
-            string updateQuery = CustomSqlServices.CreateUpdateQueryStringFromDTO(movieDtoNewData, "movies", $"movie_id = {movieId}");
+            string updateQuery = CustomSqlServices.CreateUpdateQueryStringFromDTO(movieNewData, "movies", $"movie_id = {movieId}");
 
             int rowsUpdated = 0;
-            rowsUpdated = await _db.ExecuteAsync(updateQuery, movieDtoNewData);
+            rowsUpdated = await _db.ExecuteAsync(updateQuery, movieNewData);
         }
 
         //Fetches the full plot data of a movie from OMDb API.

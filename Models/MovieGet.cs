@@ -1,37 +1,39 @@
 ﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Newtonsoft.Json;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 
 namespace GhiblipediaAPI.Models
 {
     //Data model for HttpGet requests from frontend.
+    //[Table("movies")]
     public class MovieGet
     {
-        [JsonPropertyName("movie_id")]
+        //[JsonPropertyName("movie_id")]
         public int? MovieId { get; private set; }
-        [JsonPropertyName("created_at")]
+        //[JsonPropertyName("created_at")]
         public DateTime? CreatedAt { get; set; }
-        [JsonPropertyName("english_title")]
+        //[JsonPropertyName("english_title")]
         public string? EnglishTitle { get; set; }
-        [JsonPropertyName("japanese_title")]
+        //[JsonPropertyName("japanese_title")]
         public string? JapaneseTitle { get; set; }
-        [JsonPropertyName("release_date")]
+        //[JsonPropertyName("release_date")]
         public string? ReleaseDate { get; set; }
-        [JsonPropertyName("image_url")]
+        //[JsonPropertyName("image_url")]
         public string? ImageUrl { get; set; }
-        [JsonPropertyName("trailer_url")]
+        //[JsonPropertyName("trailer_url")]
         public string? TrailerUrl { get; set; }
-        [JsonPropertyName("summary")]
+        //[JsonPropertyName("summary")]
         public string? Summary { get; set; }
-        [JsonPropertyName("plot")]
+        //[JsonPropertyName("plot")]
         public string? Plot { get; set; }
-        [JsonPropertyName("director")]
+        //[JsonPropertyName("director")]
         public string? Director { get; set; }
-        [JsonPropertyName("genre")]
+        //[JsonPropertyName("genre")]
         public string? Genre { get; set; }
-        [JsonPropertyName("running_time")]
+        //[JsonPropertyName("running_time")]
         public string? RunningTime { get; set; }
-        [JsonPropertyName("tags")]
+        //[JsonPropertyName("tags")]
         public string[]? Tags { get; set; }
     }
 }
