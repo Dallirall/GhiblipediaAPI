@@ -93,7 +93,7 @@ namespace GhiblipediaAPI.Controllers
         [Route("omdb/{englishTitle}")]
         public async Task<IActionResult> PostMovieInDBWithDataFromOmdb(string englishTitle)
         {
-            if (englishTitle == null) return UnprocessableEntity();
+            if (englishTitle == null) return BadRequest();
 
             MoviePostPut movie = new MoviePostPut();
             movie = await _movieRepo.ConvertOmdbMovieToMoviePost(englishTitle); //Gets movie data from OMDb API and converts to movie object.
