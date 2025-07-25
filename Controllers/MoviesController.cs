@@ -76,12 +76,20 @@ namespace GhiblipediaAPI.Controllers
         [Route("")]
         public async Task<IActionResult> PostMovie([FromBody] MovieInput movie)
         {
-            if (movie == null) return UnprocessableEntity(); 
-            bool isSuccess = await _movieRepo.PostMovieInDB(movie);
-            
-            if (!isSuccess)
+            if (movie == null) return BadRequest();
+            //Fixa check för empty body
+
+            try
             {
-                return StatusCode(500, "Internal server error");
+                await _movieRepo.PostMovieInDB(movie);
+            }
+            catch (ArgumentNullException a)
+            {
+                return BadRequest(); //Onödigt?
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
             }
 
             return CreatedAtAction(nameof(GetAll), movie);

@@ -10,7 +10,7 @@ namespace GhiblipediaAPI.Data
 
         public Task<MovieResponse> GetMovieByTitle(string title);
 
-        public Task<bool> PostMovieInDB(MovieInput movie);
+        public Task PostMovieInDB(MovieInput movie);
 
         public Task UpdateMovieInDb(int? id, MovieInput movie);
 

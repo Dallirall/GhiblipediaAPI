@@ -51,21 +51,21 @@ namespace GhiblipediaAPI.Controllers
             {
                 OmdbMovie omdbMovie = await _omdbService.GetOmdbMovie(title);
 
-                if (omdbMovie == null) return NotFound(); //Overkill?
+                if (omdbMovie == null) return NotFound();
 
                 MovieInput movie = _omdbService.ConvertOmdbMovieToMovieInput(omdbMovie);
-
-                if (movie == null) throw new Exception("Failed to convert OMDb data. ");
-
-                bool isSuccess = await _movieRepo.PostMovieInDB(movie);
-
-                if (!isSuccess) throw new Exception("Failed insert into database. ");
-
+                                
+                await _movieRepo.PostMovieInDB(movie);
+                
                 return CreatedAtRoute(RedirectToAction("GetByTitle", "Movies", movie.EnglishTitle), movie); //Funkar..?
             }
-            catch (Exception e)
+            catch (ArgumentNullException a)
             {
-                return StatusCode(500, e.Message); //Kan man göra såhär? (Om inte ovan exc är throwad utan något annat..)
+                return BadRequest();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message); //Kan man göra såhär? 
             }
         }
 
