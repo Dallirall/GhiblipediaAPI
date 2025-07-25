@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 namespace GhiblipediaAPI.Controllers
 {
     [ApiController]
-    [Route("api/[controller]/")] //Sets the default route for API call URLs to /api/Movies/
+    [Route("api/[controller]/")]
     public class MoviesController : ControllerBase
     {
         private readonly IMovieRepository _movieRepo;

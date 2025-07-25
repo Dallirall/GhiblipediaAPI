@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
 namespace GhiblipediaAPI.Models
@@ -8,6 +9,7 @@ namespace GhiblipediaAPI.Models
     {
         private string[]? _tags;
 
+        [Required]
         [JsonPropertyName("english_title")]
         public string? EnglishTitle { get; set; }
         [JsonPropertyName("japanese_title")]

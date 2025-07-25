@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace GhiblipediaAPI.Controllers
 {
+    //For transactions with OMDb API
     [Route("api/[controller]")]
     [ApiController]
     public class OmdbController : ControllerBase

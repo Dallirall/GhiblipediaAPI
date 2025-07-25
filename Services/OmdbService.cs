@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 
 namespace GhiblipediaAPI.Services
 {
-    //For transactions between this API and OMDb API
+    //For logic involving OMDb API
     public class OmdbService : IOmdbService
     {
         private static readonly HttpClient client = new HttpClient();
@@ -74,7 +74,7 @@ namespace GhiblipediaAPI.Services
             }
         }
 
-        //Converts by mapping values to the correct model properties.
+        //Converts by mapping values between the models' properties.
         public MovieInput ConvertOmdbMovieToMovieInput(OmdbMovie omdbMovie)
         {
             if (omdbMovie != null)
