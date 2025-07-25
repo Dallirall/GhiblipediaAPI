@@ -8,12 +8,11 @@ namespace GhiblipediaAPI.Data
 
         public Task<MovieResponse> GetMovieByID(int id);
 
-        public Task<MovieResponse> GetMovieByTitle(string english_title);
+        public Task<MovieResponse> GetMovieByTitle(string title);
 
         public Task<bool> PostMovieInDB(MovieInput movie);
 
-        public Task UpdateMovieInDb(int? movieId, MovieInput movie);
+        public Task UpdateMovieInDb(int? id, MovieInput movie);
 
-        Task<string?> GetFullPlot(string englishTitle);
     }
 }

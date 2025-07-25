@@ -35,6 +35,7 @@ namespace GhiblipediaAPI.Services
             }
         }
 
+        //Fetches the full plot data of a movie from OMDb API.
         public async Task<string?> GetOmdbFullPlot(string title)
         {
             string url = $"http://www.omdbapi.com/?apikey={_apiKey}&t={title}&plot=full";

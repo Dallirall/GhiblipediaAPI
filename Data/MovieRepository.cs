@@ -14,13 +14,11 @@ namespace GhiblipediaAPI.Data
     public class MovieRepository : IMovieRepository
     {
         private readonly IDbConnection _db;
-        private readonly IMapper _mapper;
         private readonly IOmdbService _omdbAPI;
 
-        public MovieRepository(IDbConnection db, IMapper mapper, IOmdbService omdbAPI)
+        public MovieRepository(IDbConnection db, IOmdbService omdbAPI)
         {
             _db = db;
-            _mapper = mapper;
             _omdbAPI = omdbAPI;
         }
 
@@ -105,18 +103,12 @@ namespace GhiblipediaAPI.Data
         }
 
         //Updates the specified movie in the database with the populated properties of the passed movieNewData object.
-        public async Task UpdateMovieInDb(int? movieId, MovieInput movieNewData)
+        public async Task UpdateMovieInDb(int? id, MovieInput movieNewData)
         {
-            string updateQuery = CustomSqlServices.CreateUpdateQueryStringFromDTO(movieNewData, "movies", $"movie_id = {movieId}");
+            string updateQuery = CustomSqlServices.CreateUpdateQueryStringFromDTO(movieNewData, "movies", $"movie_id = {id}");
 
             int rowsUpdated = 0;
             rowsUpdated = await _db.ExecuteAsync(updateQuery, movieNewData);
-        }
-
-        //Fetches the full plot data of a movie from OMDb API.
-        public async Task<string?> GetFullPlot(string englishTitle)
-        {
-            return await _omdbAPI.GetOmdbFullPlot(englishTitle);
         }
     }
 }
