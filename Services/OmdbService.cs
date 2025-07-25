@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 namespace GhiblipediaAPI.Services
 {
     //For transactions between this API and OMDb API
-    public class OmdbService
+    public class OmdbService : IOmdbService
     {
         private static readonly HttpClient client = new HttpClient();
         private readonly string _apiKey;
