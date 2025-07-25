@@ -46,8 +46,8 @@ namespace GhiblipediaAPI.Controllers
         {
             if (title == null) return BadRequest();
 
-            MoviePostPut movie = new MoviePostPut();
-            movie = await _movieRepo.ConvertOmdbMovieToMoviePost(title); //Gets movie data from OMDb API and converts to movie object.
+            MovieInput movie = new MovieInput();
+            movie = await _movieRepo.ConvertOmdbMovieToMovieInput(title); //Gets movie data from OMDb API and converts to movie object.
 
             bool isSuccess = await _movieRepo.PostMovieInDB(movie);
 

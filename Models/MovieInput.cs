@@ -4,7 +4,7 @@ using System.Text.Json.Serialization;
 namespace GhiblipediaAPI.Models
 {
     //Data model for HttpPost, HttpPut and HttpPatch requests from frontend.
-    public class MoviePostPut
+    public class MovieInput
     {
         private string[]? _tags;
 

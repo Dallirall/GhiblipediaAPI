@@ -72,7 +72,7 @@ namespace GhiblipediaAPI.Data
             }
         }
 
-        public async Task<bool> PostMovieInDB(MoviePostPut movie)
+        public async Task<bool> PostMovieInDB(MovieInput movie)
         {
             bool isSuccess = false;
             if (movie == null)
@@ -104,8 +104,8 @@ namespace GhiblipediaAPI.Data
             return isSuccess; 
         }
 
-        //Fetches the specified movie from OMDb API and maps the retrieved data to a MoviePostPut DTO.
-        public async Task<MoviePostPut> ConvertOmdbMovieToMoviePost(string englishTitle)
+        //Fetches the specified movie from OMDb API and maps the retrieved data to a MovieInput DTO.
+        public async Task<MovieInput> ConvertOmdbMovieToMovieInput(string englishTitle)
         {
             OmdbMovie omdbMovie = await _omdbAPI.GetOmdbMovie(englishTitle);
 
@@ -113,7 +113,7 @@ namespace GhiblipediaAPI.Data
 
             if (omdbMovie != null)
             {
-                MoviePostPut movie = _mapper.Map<MoviePostPut>(omdbMovie);
+                MovieInput movie = _mapper.Map<MovieInput>(omdbMovie);
                 return movie;
             }
 
@@ -121,7 +121,7 @@ namespace GhiblipediaAPI.Data
         }
 
         //Updates the specified movie in the database with the populated properties of the passed movieNewData object.
-        public async Task UpdateMovieInDb(int? movieId, MoviePostPut movieNewData)
+        public async Task UpdateMovieInDb(int? movieId, MovieInput movieNewData)
         {
             string updateQuery = CustomSqlServices.CreateUpdateQueryStringFromDTO(movieNewData, "movies", $"movie_id = {movieId}");
 

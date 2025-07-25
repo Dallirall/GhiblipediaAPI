@@ -76,10 +76,10 @@ and if you want the full plot, you have to make another call with the &plot=full
 The second call is to get the full plot, which is stored in the 'plot' column of the 'movies' table.
 The PUT endpoints is for updating an optional amount of properties to a db row. The columns 'japanese_title', 'trailer_url' and 'tags' (which can store an array of strings) in the 'movies' table needs to be manually updated, as this data is not available on OMDb.
 The Japanese titles have been aquired from [Studio Ghiblis official website](https://www.ghibli.jp/works/), and the romanization has been done by me, but can usually be found elswhere, such as the movie's Wikipedia page.
-- __Models:__ The model class 'MovieGet' is for HttpGet requests, where read-only fields ('movie_id' and 'created_at') are included,
-and the model class 'MoviePostPut' is for HttpPost and Put requests, where only writable fields are included, as 'movie_id' and 'created_at' are generated in the database and should not be assigned any values manually.
-The properties in 'MoviePostPut' has JsonPropertyName attributes, which I use to get the database column name in snake case for creating dynamcal SQL queries in CustomSqlServices.cs.
-The JsonPropertyName attributes are not necessary for 'MovieGet', because of the 'Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true' setting in Program.cs.
+- __Models:__ The model class 'MovieResponse' is for HttpGet requests, where read-only fields ('movie_id' and 'created_at') are included,
+and the model class 'MovieInput' is for HttpPost and Put requests, where only writable fields are included, as 'movie_id' and 'created_at' are generated in the database and should not be assigned any values manually.
+The properties in 'MovieInput' has JsonPropertyName attributes, which I use to get the database column name in snake case for creating dynamcal SQL queries in CustomSqlServices.cs.
+The JsonPropertyName attributes are not necessary for 'MovieResponse', because of the 'Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true' setting in Program.cs.
 The OmdbMovie class has properties corresponding to the JSON object got from the API call to OMDb API.
 - __Dependencies (some of them):__ 
 	- ORM: Dapper

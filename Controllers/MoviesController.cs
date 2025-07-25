@@ -74,7 +74,7 @@ namespace GhiblipediaAPI.Controllers
         //Insert a movie object with data from the JSON body into database. Use when you want to assign your own values to the object properties.
         [HttpPost]
         [Route("")]
-        public async Task<IActionResult> PostMovie([FromBody] MoviePostPut movie)
+        public async Task<IActionResult> PostMovie([FromBody] MovieInput movie)
         {
             if (movie == null) return UnprocessableEntity(); 
             bool isSuccess = await _movieRepo.PostMovieInDB(movie);
@@ -95,8 +95,8 @@ namespace GhiblipediaAPI.Controllers
         {
             if (englishTitle == null) return BadRequest();
 
-            MoviePostPut movie = new MoviePostPut();
-            movie = await _movieRepo.ConvertOmdbMovieToMoviePost(englishTitle); //Gets movie data from OMDb API and converts to movie object.
+            MovieInput movie = new MovieInput();
+            movie = await _movieRepo.ConvertOmdbMovieToMovieInput(englishTitle); //Gets movie data from OMDb API and converts to movie object.
 
             bool isSuccess = await _movieRepo.PostMovieInDB(movie);
 
@@ -111,7 +111,7 @@ namespace GhiblipediaAPI.Controllers
         //Update a movie in database. Caller can omit fields in the request body if those should not be updated.
         [HttpPut]
         [Route("{englishTitle}")]
-        public async Task<IActionResult> UpdateMovieByTitle(string englishTitle, [FromBody] MoviePostPut MovieNewData)
+        public async Task<IActionResult> UpdateMovieByTitle(string englishTitle, [FromBody] MovieInput MovieNewData)
         {
             if (MovieNewData == null) return UnprocessableEntity();
 
@@ -137,7 +137,7 @@ namespace GhiblipediaAPI.Controllers
         //Update a movie in database. Caller can omit fields in the request body if those should not be updated.
         [HttpPut]
         [Route("{movieID:int}")]
-        public async Task<IActionResult> UpdateMovieById(int movieID, [FromBody] MoviePostPut MovieNewData)
+        public async Task<IActionResult> UpdateMovieById(int movieID, [FromBody] MovieInput MovieNewData)
         {
             if (MovieNewData == null) return UnprocessableEntity();
 
