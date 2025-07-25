@@ -24,23 +24,23 @@ namespace GhiblipediaAPI.Data
             _omdbAPI = omdbAPI;
         }
 
-        public async Task<IEnumerable<MovieGet>> GetAllMovies()
+        public async Task<IEnumerable<MovieResponse>> GetAllMovies()
         {
             string sqlQuery = "SELECT * FROM movies;";
 
-            var result = await _db.QueryAsync<MovieGet>(sqlQuery);
+            var result = await _db.QueryAsync<MovieResponse>(sqlQuery);
             if (result == null) return null;
 
             return result;
         }
 
-        public async Task<MovieGet> GetMovieByID(int id)
+        public async Task<MovieResponse> GetMovieByID(int id)
         {
             string sqlQuery = $"SELECT * FROM movies WHERE movie_id = @movie_id;";
 
             try
             {
-                var result = await _db.QueryFirstOrDefaultAsync<MovieGet>(sqlQuery, new { movie_id = id });
+                var result = await _db.QueryFirstOrDefaultAsync<MovieResponse>(sqlQuery, new { movie_id = id });
                 if (result == null) return null;
 
                 return result;
@@ -53,14 +53,14 @@ namespace GhiblipediaAPI.Data
 
         }
 
-        public async Task<MovieGet> GetMovieByTitle(string englishTitle)
+        public async Task<MovieResponse> GetMovieByTitle(string englishTitle)
         {
             //Leta först i engtitle sen japtitle
             string sqlQuery = $"SELECT * FROM movies WHERE LOWER(english_title) = LOWER(@english_title);";
 
             try
             {
-                var result = await _db.QueryFirstOrDefaultAsync<MovieGet>(sqlQuery, new { english_title = englishTitle });
+                var result = await _db.QueryFirstOrDefaultAsync<MovieResponse>(sqlQuery, new { english_title = englishTitle });
                 if (result == null) return null;
 
                 return result;

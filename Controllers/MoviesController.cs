@@ -25,7 +25,7 @@ namespace GhiblipediaAPI.Controllers
 
         [HttpGet]
         [Route("")]
-        public async Task<ActionResult<IEnumerable<MovieGet>>> GetAll()
+        public async Task<ActionResult<IEnumerable<MovieResponse>>> GetAll()
         {            
             var movies = await _movieRepo.GetAllMovies();
             if (movies == null) return NotFound();
@@ -35,7 +35,7 @@ namespace GhiblipediaAPI.Controllers
 
         [HttpGet]
         [Route("{id:int}")]        
-        public async Task<ActionResult<MovieGet>> GetByID(int id)
+        public async Task<ActionResult<MovieResponse>> GetByID(int id)
         {
             try
             {
@@ -54,7 +54,7 @@ namespace GhiblipediaAPI.Controllers
                 
         [HttpGet]
         [Route("{englishTitle}")]        //Ändra ev till 'title' och kolla språk backend
-        public async Task<ActionResult<MovieGet>> GetByTitle(string englishTitle)
+        public async Task<ActionResult<MovieResponse>> GetByTitle(string englishTitle)
         {
             try
             {
@@ -117,7 +117,7 @@ namespace GhiblipediaAPI.Controllers
 
             try
             {
-                MovieGet movieFromDb = await _movieRepo.GetMovieByTitle(englishTitle);
+                MovieResponse movieFromDb = await _movieRepo.GetMovieByTitle(englishTitle);
                 if (movieFromDb == null)
                 {
                     Console.WriteLine($"The movie {englishTitle} does not yet exist in database. ");
@@ -143,7 +143,7 @@ namespace GhiblipediaAPI.Controllers
 
             try
             {
-                MovieGet movieFromDb = await _movieRepo.GetMovieByID(movieID);
+                MovieResponse movieFromDb = await _movieRepo.GetMovieByID(movieID);
                 if (movieFromDb == null)
                 {
                     Console.WriteLine($"The movie does not yet exist in database. ");
