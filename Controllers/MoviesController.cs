@@ -89,24 +89,24 @@ namespace GhiblipediaAPI.Controllers
 
         //Flytta över till egen controller
         //Searches OMDb API for the specified movie. Inserts that movie into database, assigning the retrieved data from OMDb to the corresponding database columns. 
-        [HttpPost]
-        [Route("omdb/{englishTitle}")]
-        public async Task<IActionResult> PostMovieInDBWithDataFromOmdb(string englishTitle)
-        {
-            if (englishTitle == null) return BadRequest();
+        //[HttpPost]
+        //[Route("omdb/{englishTitle}")]
+        //public async Task<IActionResult> PostMovieInDBWithDataFromOmdb(string englishTitle)
+        //{
+        //    if (englishTitle == null) return BadRequest();
 
-            MovieInput movie = new MovieInput();
-            movie = await _movieRepo.ConvertOmdbMovieToMovieInput(englishTitle); //Gets movie data from OMDb API and converts to movie object.
+        //    MovieInput movie = new MovieInput();
+        //    movie = await _movieRepo.ConvertOmdbMovieToMovieInput(englishTitle); //Gets movie data from OMDb API and converts to movie object.
 
-            bool isSuccess = await _movieRepo.PostMovieInDB(movie);
+        //    bool isSuccess = await _movieRepo.PostMovieInDB(movie);
 
-            if (!isSuccess)
-            {
-                return StatusCode(500, "Internal server error");
-            }
+        //    if (!isSuccess)
+        //    {
+        //        return StatusCode(500, "Internal server error");
+        //    }
 
-            return CreatedAtAction(nameof(GetAll), movie);
-        }
+        //    return CreatedAtAction(nameof(GetAll), movie);
+        //}
 
         //Update a movie in database. Caller can omit fields in the request body if those should not be updated.
         [HttpPut]

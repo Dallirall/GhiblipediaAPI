@@ -12,8 +12,6 @@ namespace GhiblipediaAPI.Data
 
         public Task<bool> PostMovieInDB(MovieInput movie);
 
-        public Task<MovieInput> ConvertOmdbMovieToMovieInput(string englishTitle);
-
         public Task UpdateMovieInDb(int? movieId, MovieInput movie);
 
         Task<string?> GetFullPlot(string englishTitle);

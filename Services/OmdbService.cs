@@ -1,4 +1,5 @@
-﻿using GhiblipediaAPI.Models;
+﻿using AutoMapper;
+using GhiblipediaAPI.Models;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 
@@ -9,16 +10,18 @@ namespace GhiblipediaAPI.Services
     {
         private static readonly HttpClient client = new HttpClient();
         private readonly string _apiKey;
+        private readonly IMapper _mapper;
 
-        public OmdbService(IOptions<OmdbAPIOptions> options)
+        public OmdbService(IOptions<OmdbAPIOptions> options, IMapper mapper)
         {
             _apiKey = options.Value.ApiKey
                 ?? throw new InvalidOperationException("API key 'OmdbApi:ApiKey' is not configured.");
+            _mapper = mapper;
         }
 
-        public async Task<OmdbMovie> GetOmdbMovie(string movieTitle)
+        public async Task<OmdbMovie> GetOmdbMovie(string title)
         {  
-            string url = $"http://www.omdbapi.com/?apikey={_apiKey}&t={movieTitle}";
+            string url = $"http://www.omdbapi.com/?apikey={_apiKey}&t={title}";
 
             var movieData = await GetMovieDataAsync(url);
             OmdbMovie movie = JsonConvert.DeserializeObject<OmdbMovie>(movieData.ToString());
@@ -32,9 +35,9 @@ namespace GhiblipediaAPI.Services
             }
         }
 
-        public async Task<string?> GetOmdbFullPlot(string movieTitle)
+        public async Task<string?> GetOmdbFullPlot(string title)
         {
-            string url = $"http://www.omdbapi.com/?apikey={_apiKey}&t={movieTitle}&plot=full";
+            string url = $"http://www.omdbapi.com/?apikey={_apiKey}&t={title}&plot=full";
             
             var movieData = await GetMovieDataAsync(url);
             OmdbMovie movie = JsonConvert.DeserializeObject<OmdbMovie>(movieData.ToString());
@@ -69,6 +72,18 @@ namespace GhiblipediaAPI.Services
                 return null;
             }
         }
-       
+
+        //Converts by mapping values to the correct model properties.
+        public MovieInput ConvertOmdbMovieToMovieInput(OmdbMovie omdbMovie)
+        {
+            if (omdbMovie != null)
+            {
+                MovieInput movie = _mapper.Map<MovieInput>(omdbMovie);
+                return movie;
+            }
+
+            return null;
+        }
+
     }
 }

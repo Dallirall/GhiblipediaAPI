@@ -104,22 +104,6 @@ namespace GhiblipediaAPI.Data
             return isSuccess; 
         }
 
-        //Fetches the specified movie from OMDb API and maps the retrieved data to a MovieInput DTO.
-        public async Task<MovieInput> ConvertOmdbMovieToMovieInput(string englishTitle)
-        {
-            OmdbMovie omdbMovie = await _omdbAPI.GetOmdbMovie(englishTitle);
-
-            omdbMovie.FullPlot = await _omdbAPI.GetOmdbFullPlot(englishTitle);
-
-            if (omdbMovie != null)
-            {
-                MovieInput movie = _mapper.Map<MovieInput>(omdbMovie);
-                return movie;
-            }
-
-            return null;
-        }
-
         //Updates the specified movie in the database with the populated properties of the passed movieNewData object.
         public async Task UpdateMovieInDb(int? movieId, MovieInput movieNewData)
         {
