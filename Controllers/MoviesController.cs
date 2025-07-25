@@ -34,12 +34,12 @@ namespace GhiblipediaAPI.Controllers
         }
 
         [HttpGet]
-        [Route("{movieID:int}")]        
-        public async Task<ActionResult<MovieGet>> GetByID(int movieID)
+        [Route("{id:int}")]        
+        public async Task<ActionResult<MovieGet>> GetByID(int id)
         {
             try
             {
-                var movie = await _movieRepo.GetMovieByID(movieID);
+                var movie = await _movieRepo.GetMovieByID(id);
 
                 if (movie == null) return NotFound();
 
@@ -53,7 +53,7 @@ namespace GhiblipediaAPI.Controllers
         }
                 
         [HttpGet]
-        [Route("{englishTitle}")]        
+        [Route("{englishTitle}")]        //Ändra ev till 'title' och kolla språk backend
         public async Task<ActionResult<MovieGet>> GetByTitle(string englishTitle)
         {
             try
@@ -87,6 +87,7 @@ namespace GhiblipediaAPI.Controllers
             return CreatedAtAction(nameof(GetAll), movie);
         }
 
+        //Flytta över till egen controller
         //Searches OMDb API for the specified movie. Inserts that movie into database, assigning the retrieved data from OMDb to the corresponding database columns. 
         [HttpPost]
         [Route("omdb/{englishTitle}")]

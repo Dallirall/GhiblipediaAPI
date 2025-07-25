@@ -70,22 +70,21 @@ I hope this works. Remember that when you do git commits and push to the main br
 
 ### About the API's logic and structure
 - __Controllers:__ At the moment, there is only one Controller class (MoviesController), for handling transactions between frontend and the database 'movies' table. 
-- __Endpoints:__ The GET endpoints are self-explanatory. There are two POST endpoints. The one we mainly use is the PostMovieInDBWithDataFromOmdb(). This calls the OMDb API and gets data to insert in the 'movies' table. 
+- __Endpoints:__ The GET endpoints are self-explanatory. There are two POST endpoints. The one we mainly use is the PostMovieInDBWithDataFromOmdb(). This calls the OMDb API and gets data to insert into the 'movies' table. 
 When making API calls to OMDb API, by default you get the short version of the movie plot, which I have mapped to the 'summary' column of the 'movies' table, 
-and if you want the full plot, you have to make another call with the &plot=full parameter, which is why in the logic behind PostMovieInDBWithDataFromOmdb(), two calls are made to OMDb. 
+and if you want the full plot, you have to make another call with the &plot=full query parameter, which is why in the logic behind PostMovieInDBWithDataFromOmdb(), two calls are made to OMDb. 
 The second call is to get the full plot, which is stored in the 'plot' column of the 'movies' table.
-The main PUT endpoints is for updating an optional amount of properties to a db row. The columns 'japanese_title', 'trailer_url' and 'tags' (which can store an array of strings) in the 'movies' table needs to be manually updated, as this data is not available on OMDb.
-The Japanese titles have been aquired from Studio Ghiblis official website, and the romanization has been done by me, but can usually be found elswhere, such as the movie's Wikipedia page.
-- __Models:__ There is definately a better way of doing this, but what I've done is to have one model class for HttpGet's, where read-only fields ('movie_id' and 'created_at') are included,
-and another class for HttpPost's and Put's, where only writable fields are included, as 'movie_id' and 'created_at' are generated in the database and should not be assigned any values.
-The properties of these classes are in the camel case standard (e.g. EnglishTitle), but because I use the property names to create custom dynamic SQL, I needed the property names as they are in the db table too, 
-which is why I made the Dto classes (MovieDtoGet corresponds to MovieGet, etc), and convert between the models using Automapper (the mapping is done in MappingProfile.cs).
+The PUT endpoints is for updating an optional amount of properties to a db row. The columns 'japanese_title', 'trailer_url' and 'tags' (which can store an array of strings) in the 'movies' table needs to be manually updated, as this data is not available on OMDb.
+The Japanese titles have been aquired from [Studio Ghiblis official website](https://www.ghibli.jp/works/), and the romanization has been done by me, but can usually be found elswhere, such as the movie's Wikipedia page.
+- __Models:__ The model class 'MovieGet' is for HttpGet requests, where read-only fields ('movie_id' and 'created_at') are included,
+and the model class 'MoviePostPut' is for HttpPost and Put requests, where only writable fields are included, as 'movie_id' and 'created_at' are generated in the database and should not be assigned any values manually.
+The properties in 'MoviePostPut' has JsonPropertyName attributes, which I use to get the database column name in snake case for creating dynamcal SQL queries in CustomSqlServices.cs.
+The JsonPropertyName attributes are not necessary for 'MovieGet', because of the 'Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true' setting in Program.cs.
 The OmdbMovie class has properties corresponding to the JSON object got from the API call to OMDb API.
 - __Dependencies (some of them):__ 
 	- ORM: Dapper
 	- Object-to-object mapper: Automapper
 	- Npgsql: .NET Data provider for PostgreSQL
-	- Microsoft.AspNetCore.JsonPatch: Support for JSON Patch, though the HttpPatch endpoint might be unnecessary.
 	- Microsoft.AspNetCore.Authentication.JwtBearer: The work on authentication and security is still in progress. It's unclear if this package is needed.
 
 

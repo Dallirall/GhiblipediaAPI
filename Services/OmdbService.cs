@@ -5,12 +5,12 @@ using Newtonsoft.Json;
 namespace GhiblipediaAPI.Services
 {
     //For transactions between this API and OMDb API
-    public class OmdbAPIService
+    public class OmdbService
     {
         private static readonly HttpClient client = new HttpClient();
         private readonly string _apiKey;
 
-        public OmdbAPIService(IOptions<OmdbAPIOptions> options)
+        public OmdbService(IOptions<OmdbAPIOptions> options)
         {
             _apiKey = options.Value.ApiKey
                 ?? throw new InvalidOperationException("API key 'OmdbApi:ApiKey' is not configured.");

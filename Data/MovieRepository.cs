@@ -15,50 +15,23 @@ namespace GhiblipediaAPI.Data
     {
         private readonly IDbConnection _db;
         private readonly IMapper _mapper;
-        private readonly OmdbAPIService _omdbAPI;
+        private readonly OmdbService _omdbAPI;
 
-        public MovieRepository(IDbConnection db, IMapper mapper, OmdbAPIService omdbAPI)
+        public MovieRepository(IDbConnection db, IMapper mapper, OmdbService omdbAPI)
         {
             _db = db;
             _mapper = mapper;
             _omdbAPI = omdbAPI;
         }
 
-        //These convert methods uses Automapper to convert between the data model classes and the DTO classes
-        public MovieGet ConvertMovieDtoToMovieGet(MovieDtoGet dto)
-        {
-            return _mapper.Map<MovieGet>(dto);
-        }
-
-        public MovieDtoGet ConvertMovieGetToMovieDto(MovieGet movie)
-        {
-            return _mapper.Map<MovieDtoGet>(movie);
-        }
-
-        public MoviePostPut ConvertMovieDtoPostToMoviePost(MovieDtoPostPut dto)
-        {
-            return _mapper.Map<MoviePostPut>(dto);
-        }
-
-        public MovieDtoPostPut ConvertMoviePostToMovieDtoPost(MoviePostPut dto)
-        {
-            return _mapper.Map<MovieDtoPostPut>(dto);
-        }
-
-        public MoviePostPut ConvertMovieGetToMoviePost(MovieGet movieGet)
-        {
-            return _mapper.Map<MoviePostPut>(movieGet);
-        }
-
-
         public async Task<IEnumerable<MovieGet>> GetAllMovies()
         {
             string sqlQuery = "SELECT * FROM movies;";
 
-            var result = await _db.QueryAsync<MovieDtoGet>(sqlQuery);
+            var result = await _db.QueryAsync<MovieGet>(sqlQuery);
             if (result == null) return null;
 
-            return result.Select(dto => ConvertMovieDtoToMovieGet(dto));
+            return result;
         }
 
         public async Task<MovieGet> GetMovieByID(int id)
@@ -67,10 +40,10 @@ namespace GhiblipediaAPI.Data
 
             try
             {
-                var result = await _db.QueryFirstOrDefaultAsync<MovieDtoGet>(sqlQuery, new { movie_id = id });
+                var result = await _db.QueryFirstOrDefaultAsync<MovieGet>(sqlQuery, new { movie_id = id });
                 if (result == null) return null;
 
-                return ConvertMovieDtoToMovieGet(result);
+                return result;
             }
             catch (Exception ex)
             {
@@ -82,14 +55,15 @@ namespace GhiblipediaAPI.Data
 
         public async Task<MovieGet> GetMovieByTitle(string englishTitle)
         {
+            //Leta först i engtitle sen japtitle
             string sqlQuery = $"SELECT * FROM movies WHERE LOWER(english_title) = LOWER(@english_title);";
 
             try
             {
-                var result = await _db.QueryFirstOrDefaultAsync<MovieDtoGet>(sqlQuery, new { english_title = englishTitle });
+                var result = await _db.QueryFirstOrDefaultAsync<MovieGet>(sqlQuery, new { english_title = englishTitle });
                 if (result == null) return null;
 
-                return ConvertMovieDtoToMovieGet(result);
+                return result;
             }
             catch (Exception ex)
             {
@@ -105,9 +79,7 @@ namespace GhiblipediaAPI.Data
             {
                 Console.WriteLine("Could not find the data to post in database.");
                 return isSuccess;
-            }
-            
-            //var movieDtoPost = ConvertMoviePostToMovieDtoPost(movie);
+            }    
 
             var existingMovie = await GetMovieByTitle(movie.EnglishTitle);
 
@@ -151,8 +123,6 @@ namespace GhiblipediaAPI.Data
         //Updates the specified movie in the database with the populated properties of the passed movieNewData object.
         public async Task UpdateMovieInDb(int? movieId, MoviePostPut movieNewData)
         {
-            //MovieDtoPostPut movieDtoNewData = ConvertMoviePostToMovieDtoPost(MovieNewData);
-
             string updateQuery = CustomSqlServices.CreateUpdateQueryStringFromDTO(movieNewData, "movies", $"movie_id = {movieId}");
 
             int rowsUpdated = 0;

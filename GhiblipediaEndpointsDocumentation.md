@@ -42,10 +42,3 @@ URL for api calls to the service hosted on Render: https://ghiblipediaapi.onrend
 
 <br>
 <br>
-
- **PATCH Functions:**
-
-<br>
-
-- /api/movies/{englishTitle} - Edit a movie object in database using Json Patch.
-  > _Ex: PUT /api/movies/Howl's%20Moving%20Castle_<br> _[{"op": "add", "path": "/JapaneseTitle", "value" : "ハウルの動く城 Hauru no Ugoku Shiro"}]_
