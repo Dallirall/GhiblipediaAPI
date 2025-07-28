@@ -1,7 +1,11 @@
 # GhiblipediaAPI
 
-This API functions as the backend to the Ghiblipedia website. The frontend developement is made by [AMD-93](https://github.com/AMD-93), who is the owner of this project.
+This API provides backend functionalities to the Ghiblipedia website. The frontend developement is made by [AMD-93](https://github.com/AMD-93), who is the owner of this project.
+This API was originally made by [Dallirall](https://github.com/Dallirall/), 
+but since August 2025 this project is continued on the [GhiblipediaAPI fork](https://github.com/AMD-93/GhiblipediaAPI) on AMD-93's GitHub repo.
+The original repo on Dallirall's GitHub will be archived.
 
+<br>
 
 ## To future developers of this API
 
