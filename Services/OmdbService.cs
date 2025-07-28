@@ -75,11 +75,11 @@ namespace GhiblipediaAPI.Services
         }
 
         //Converts by mapping values between the models' properties.
-        public MovieInput ConvertOmdbMovieToMovieInput(OmdbMovie omdbMovie)
+        public MovieCreate ConvertOmdbMovieToMovieCreate(OmdbMovie omdbMovie)
         {
             if (omdbMovie != null)
             {
-                MovieInput movie = _mapper.Map<MovieInput>(omdbMovie);
+                MovieCreate movie = _mapper.Map<MovieCreate>(omdbMovie);
                 return movie;
             }
 

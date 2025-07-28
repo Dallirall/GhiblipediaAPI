@@ -74,18 +74,13 @@ namespace GhiblipediaAPI.Controllers
         //Insert a movie object with data from the JSON body into database. Use when you want to assign your own values to the object properties.
         [HttpPost]
         [Route("")]
-        public async Task<IActionResult> PostMovie([FromBody] MovieInput movie)
+        public async Task<IActionResult> PostMovie([FromBody] MovieCreate movie)
         {
             if (movie == null) return BadRequest();
-            //Fixa check för empty body
 
             try
             {
                 await _movieRepo.PostMovieInDB(movie);
-            }
-            catch (ArgumentNullException a)
-            {
-                return BadRequest(); //Onödigt?
             }
             catch (Exception ex)
             {
@@ -98,24 +93,23 @@ namespace GhiblipediaAPI.Controllers
         //Update a movie in database. Caller can omit fields in the request body if those should not be updated.
         [HttpPut]
         [Route("{englishTitle}")]
-        public async Task<IActionResult> UpdateMovieByTitle(string englishTitle, [FromBody] MovieInput MovieNewData)
+        public async Task<IActionResult> UpdateMovieByTitle(string englishTitle, [FromBody] MovieUpdate MovieNewData)
         {
-            if (MovieNewData == null) return UnprocessableEntity();
+            if (MovieNewData == null) return BadRequest();
 
             try
             {
                 MovieResponse movieFromDb = await _movieRepo.GetMovieByTitle(englishTitle);
                 if (movieFromDb == null)
                 {
-                    Console.WriteLine($"The movie {englishTitle} does not yet exist in database. ");
-                    return BadRequest();
+                    throw new Exception($"The movie {englishTitle} does not yet exist in database. ");
                 }
 
                 await _movieRepo.UpdateMovieInDb(movieFromDb.MovieId, MovieNewData);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, ex);
+                return StatusCode(500, ex.Message);
             }
 
             return Ok();
@@ -124,24 +118,23 @@ namespace GhiblipediaAPI.Controllers
         //Update a movie in database. Caller can omit fields in the request body if those should not be updated.
         [HttpPut]
         [Route("{movieID:int}")]
-        public async Task<IActionResult> UpdateMovieById(int movieID, [FromBody] MovieInput MovieNewData)
+        public async Task<IActionResult> UpdateMovieById(int movieID, [FromBody] MovieUpdate MovieNewData)
         {
-            if (MovieNewData == null) return UnprocessableEntity();
+            if (MovieNewData == null) return BadRequest();
 
             try
             {
                 MovieResponse movieFromDb = await _movieRepo.GetMovieByID(movieID);
                 if (movieFromDb == null)
                 {
-                    Console.WriteLine($"The movie does not yet exist in database. ");
-                    return BadRequest();
+                    throw new Exception($"The movie does not yet exist in database. ");
                 }
 
                 await _movieRepo.UpdateMovieInDb(movieFromDb.MovieId, MovieNewData);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, ex);
+                return StatusCode(500, ex.Message);
             }
 
             return Ok();

@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 
 namespace GhiblipediaAPI.Models
 {
-    //Data model for HttpGet requests from frontend.
+    //Data model for HttpGet requests.
     public class MovieResponse
     {               
         //Rename to 'id'

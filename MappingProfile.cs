@@ -8,7 +8,7 @@ namespace GhiblipediaAPI
         //For mapping between movie classes using AutoMapper.
         public MappingProfile()
         {
-            CreateMap<OmdbMovie, MovieInput>()                
+            CreateMap<OmdbMovie, MovieCreate>()                
                 .ForMember(dest => dest.EnglishTitle, opt => opt.MapFrom(src => src.Title))
                 .ForMember(dest => dest.ReleaseDate, opt => opt.MapFrom(src => src.Released))
                 .ForMember(dest => dest.ImageUrl, opt => opt.MapFrom(src => src.Poster))

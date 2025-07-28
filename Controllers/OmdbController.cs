@@ -54,19 +54,15 @@ namespace GhiblipediaAPI.Controllers
 
                 if (omdbMovie == null) return NotFound();
 
-                MovieInput movie = _omdbService.ConvertOmdbMovieToMovieInput(omdbMovie);
+                MovieCreate movie = _omdbService.ConvertOmdbMovieToMovieCreate(omdbMovie);
                                 
                 await _movieRepo.PostMovieInDB(movie);
                 
                 return CreatedAtRoute(RedirectToAction("GetByTitle", "Movies", movie.EnglishTitle), movie); //Funkar..?
             }
-            catch (ArgumentNullException a)
-            {
-                return BadRequest();
-            }
             catch (Exception ex)
             {
-                return StatusCode(500, ex.Message); //Kan man göra såhär? 
+                return StatusCode(500, ex.Message);
             }
         }
 

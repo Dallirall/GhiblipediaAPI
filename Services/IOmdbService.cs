@@ -10,6 +10,6 @@ namespace GhiblipediaAPI.Services
 
         Task<string> GetMovieDataAsync(string url);
 
-        MovieInput ConvertOmdbMovieToMovieInput(OmdbMovie omdbMovie);
+        MovieCreate ConvertOmdbMovieToMovieCreate(OmdbMovie omdbMovie);
     }
 }

@@ -70,28 +70,34 @@ namespace GhiblipediaAPI.Data
             }
         }
 
-        public async Task PostMovieInDB(MovieInput movie)
+        public async Task PostMovieInDB(MovieCreate movie)
         {
             if (movie == null) throw new ArgumentNullException(nameof(movie), "Could not find the data to post in database");
-  
+
+            if (movie.EnglishTitle == null) throw new ArgumentException("The English title of the movie is required. ");
+
             var existingMovie = await GetMovieByTitle(movie.EnglishTitle);
 
             if (existingMovie != null) throw new Exception($"The movie '{movie.EnglishTitle}' already exists in database. ");
 
             string sqlQuery = CustomSqlServices.CreateInsertQueryStringFromDTO(movie, "movies");
 
-            Console.WriteLine("Inserting into database... ");
             await _db.ExecuteAsync(sqlQuery, movie);
 
         }
 
         //Updates the specified movie in the database with the populated properties of the passed movieNewData object.
-        public async Task UpdateMovieInDb(int? id, MovieInput movieNewData)
+        public async Task UpdateMovieInDb(int? id, MovieUpdate movieNewData)
         {
+
+            if (movieNewData == null) throw new ArgumentNullException(nameof(movieNewData), "Could not find data to update. ");
+            if (id == null) throw new ArgumentException("The value for parameter 'id' is missing. ", nameof(id));
+
             string updateQuery = CustomSqlServices.CreateUpdateQueryStringFromDTO(movieNewData, "movies", $"movie_id = {id}");
 
             int rowsUpdated = 0;
             rowsUpdated = await _db.ExecuteAsync(updateQuery, movieNewData);
+            
         }
     }
 }
