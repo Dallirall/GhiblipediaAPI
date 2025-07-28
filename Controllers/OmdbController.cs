@@ -35,9 +35,13 @@ namespace GhiblipediaAPI.Controllers
 
                 return Ok(movie);
             }
-            catch (HttpRequestException ex) //ToDo: Check possible exceptions
+            catch (HttpRequestException ex)
             {
-                return BadRequest(ex.Message); //Correct status code??
+                return StatusCode(502, ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
             }
         }
 
@@ -57,8 +61,9 @@ namespace GhiblipediaAPI.Controllers
                 MovieCreate movie = _omdbService.ConvertOmdbMovieToMovieCreate(omdbMovie);
                                 
                 await _movieRepo.PostMovieInDB(movie);
-                
-                return CreatedAtRoute(RedirectToAction("GetByTitle", "Movies", movie.EnglishTitle), movie); //Funkar..?
+
+                return Created(); //ToDo: Fix proper return for frontend
+
             }
             catch (Exception ex)
             {

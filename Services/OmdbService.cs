@@ -53,25 +53,19 @@ namespace GhiblipediaAPI.Services
         }
 
         //Sends a GET request to OMDb API and returns the JSON response as a string.
+        //Throws HttpRequestException if the response from OMDb is not successful.
         public async Task<string> GetMovieDataAsync(string url)
         {
-            try
+            var response = await client.SendAsync(new HttpRequestMessage()
             {
-                var response = await client.SendAsync(new HttpRequestMessage()
-                {
-                    Method = HttpMethod.Get,
-                    RequestUri = new Uri(url),
-                });
+                Method = HttpMethod.Get,
+                RequestUri = new Uri(url),
+            });
 
-                response.EnsureSuccessStatusCode();
+            response.EnsureSuccessStatusCode();
 
-                return await response.Content.ReadAsStringAsync();                
-            }
-            catch (HttpRequestException ex)
-            {
-                Console.WriteLine($"Request error: {ex.Message}");
-                return null;
-            }
+            return await response.Content.ReadAsStringAsync();                
+            
         }
 
         //Converts by mapping values between the models' properties.
