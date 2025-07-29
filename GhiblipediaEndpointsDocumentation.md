@@ -42,3 +42,14 @@ URL for api calls to the service hosted on Render: https://ghiblipediaapi.onrend
 
 <br>
 <br>
+
+**DELETE Endpoints:**
+
+<br>
+
+- /api/movies/{englishTitle} - Delete the specified movie object in database. 
+> _Ex: DELETE /api/movies/spirited away_
+- /api/movies/{id} - Delete the movie of the specified ID in database. 
+> _Ex: DELETE /api/movies/13_
+<br>
+<br>
