@@ -1,4 +1,5 @@
-﻿using GhiblipediaAPI.Data;
+﻿using Asp.Versioning;
+using GhiblipediaAPI.Data;
 using GhiblipediaAPI.Models;
 using GhiblipediaAPI.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -13,7 +14,8 @@ using System.Threading.Tasks;
 namespace GhiblipediaAPI.Controllers
 {
     [ApiController]
-    [Route("api/[controller]/")]
+    [Route("api/v{version:apiVersion}/[controller]/")]
+    [ApiVersion("1.0")]
     public class MoviesController : ControllerBase
     {
         private readonly IMovieRepository _movieRepo;

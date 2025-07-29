@@ -1,4 +1,5 @@
-﻿using GhiblipediaAPI.Data;
+﻿using Asp.Versioning;
+using GhiblipediaAPI.Data;
 using GhiblipediaAPI.Models;
 using GhiblipediaAPI.Services;
 using Microsoft.AspNetCore.Http;
@@ -7,8 +8,8 @@ using Microsoft.AspNetCore.Mvc;
 namespace GhiblipediaAPI.Controllers
 {
     //For transactions with OMDb API
-    [Route("api/[controller]")]
-    [ApiController]
+    [Route("api/v{version:apiVersion}/[controller]/")]
+    [ApiVersion("1.0")]
     public class OmdbController : ControllerBase
     {
         private readonly IOmdbService _omdbService;

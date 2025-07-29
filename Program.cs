@@ -1,3 +1,4 @@
+using Asp.Versioning;
 using GhiblipediaAPI.Data;
 using GhiblipediaAPI.Services;
 using Microsoft.Data.SqlClient;
@@ -41,6 +42,16 @@ builder.Services.AddSwaggerGen(options =>
         Title = "My API",
         Version = "v1"
     });
+});
+
+builder.Services.AddApiVersioning(options =>
+{
+    options.DefaultApiVersion = new ApiVersion(1, 0);
+    options.AssumeDefaultVersionWhenUnspecified = true;
+    options.ReportApiVersions = true;
+
+    // Use URL segment versioning
+    options.ApiVersionReader = new UrlSegmentApiVersionReader();
 });
 
 
