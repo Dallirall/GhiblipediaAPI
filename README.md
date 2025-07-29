@@ -1,6 +1,8 @@
 # GhiblipediaAPI
+<sub>Readme last updated 2025-07-29</sub>
 
-This API provides backend functionalities to the Ghiblipedia website. The frontend developement is made by [AMD-93](https://github.com/AMD-93), who is the owner of this project.
+This API provides backend functionalities to the [Ghiblipedia website](https://ghiblipedia.onrender.com/). 
+The frontend developement is made by [AMD-93](https://github.com/AMD-93), who is the owner of this project.
 This API was originally made by [Dallirall](https://github.com/Dallirall/), 
 but since August 2025 this project is continued on the [GhiblipediaAPI fork](https://github.com/AMD-93/GhiblipediaAPI) on AMD-93's GitHub repo.
 The original repo on Dallirall's GitHub will be archived.
@@ -29,7 +31,7 @@ At the moment of writing, we use the free-tier, which comes with some restrictio
 - __Auth0:__ We use Auth0 for handling login and user accounts. 
 
 - __REST API (ASP.NET Core):__ This API is a REST API made in ASP.NET Core. The aim is for the API to handle all business logic, data processing, and communication with the database and external services. 
-(Some features of the web page however might be more practical to program in the frontend, such as search boxes).
+(Some features of the web page however might be more practical to program in the frontend.).
 The API is structured with Controllers, Data (business logic), Models (DTOs/model classes), and Services (custom logic, external API connections).
 
 - __Docker Container:__ The API is packaged and run inside a Docker container for both local development and production deployment. Render deploys this container.
@@ -41,8 +43,8 @@ The Postgres connection string is stored as an environment variable on Render. (
 The tables have RLS by default, and needs RLS Policies to handle access control. At the moment, I have not yet looked over the security or anything, since I still have little knowledge in this area.
 
 - __OMDb API:__ [OMDb API](https://www.omdbapi.com/) is the service we have used to get data for the Studio Ghibli movies. 
-There is an endpoint on GhiblipediaAPI that gets a movie from OMDb API and stores it in our Supabase 'movies' table. 
-Data requests are sent to 'http://www.omdbapi.com/?apikey=[yourkey]&'. Our apikey is stored as an environment variable on Render.
+There are endpoints on GhiblipediaAPI that gets a movie from OMDb API and stores it in our Supabase 'movies' table. 
+Data requests to OMDb are sent to 'http://www.omdbapi.com/?apikey=[yourkey]&'. Our apikey is stored as an environment variable on Render.
 
 <br>
 <br>
@@ -64,22 +66,24 @@ Here follows some general steps for you to set up the environment on your local 
 - In Visual Studio, right click on the Dockerfile in the solution explorer and select 'Build Docker Image'.
 - Now when you run/debug the application, instead of 'http' or 'https', the run button should say 'Container (Dockerfile)', otherwise select that option in the drop-down menu.
 - Run the application. It should start a new Docker container. You can test if it works by calling the API through Postman (if not installed, install it). 
-Try doing a GET call with this url: http://localhost:32770/api/movies. 
+Try doing a GET request with this url: http://localhost:32770/api/movies. 
 If it doesen't find the API, open Docker desktop and check the running containers ports. By default it's usually 32770:8080 for HTTP requests, but it might be something else for you perhaps, in which case you use that port in the url instead. 
 
 I hope this works. Remember that when you do git commits and push to the main branch, those changes will be deployed, so if you don't want your changes to go live, push to another branch.
 
 ### About the API's logic and structure
-- __Controllers:__ At the moment, there is only one Controller class (MoviesController), for handling transactions between frontend and the database 'movies' table. 
-- __Endpoints:__ The GET endpoints are self-explanatory. There are two POST endpoints. The one we mainly use is the PostMovieInDBWithDataFromOmdb(). This calls the OMDb API and gets data to insert into the 'movies' table. 
+- __Controllers:__ At the moment, there are two controller classes: MoviesController, for handling transactions between frontend and the database's 'movies' table, 
+and OmdbController, for transactions with OMDb API. 
+- __Endpoints:__ The GET endpoints are self-explanatory. There are in total two POST endpoints. The one we mainly use is the PostMovieInDBWithDataFromOmdb() on the OmdbController. 
+This calls the OMDb API and gets data on the specified movie, and inserts that into the Ghiblipedia database's 'movies' table. 
 When making API calls to OMDb API, by default you get the short version of the movie plot, which I have mapped to the 'summary' column of the 'movies' table, 
 and if you want the full plot, you have to make another call with the &plot=full query parameter, which is why in the logic behind PostMovieInDBWithDataFromOmdb(), two calls are made to OMDb. 
 The second call is to get the full plot, which is stored in the 'plot' column of the 'movies' table.
-The PUT endpoints is for updating an optional amount of properties to a db row. The columns 'japanese_title', 'trailer_url' and 'tags' (which can store an array of strings) in the 'movies' table needs to be manually updated, as this data is not available on OMDb.
+The PUT endpoints is for updating an optional amount of properties to a database object. The columns 'japanese_title', 'trailer_url' and 'tags' (which can store an array of strings) in the 'movies' table needs to be manually updated, as this data is not available on OMDb.
 The Japanese titles have been aquired from [Studio Ghiblis official website](https://www.ghibli.jp/works/), and the romanization has been done by me, but can usually be found elswhere, such as the movie's Wikipedia page.
 - __Models:__ The model class 'MovieResponse' is for HttpGet requests, where read-only fields ('id' and 'created_at') are included.
 The model class 'MovieCreate' is for HttpPost request, which require a value for the EnglishTitle property, and where only writable properties are included, as 'id' and 'created_at' are generated in the database and should not be assigned any values manually.
-The 'MovieUpdate' class model is for HttpPut requests, which do not require any specific parameter in the request body.
+The 'MovieUpdate' model class is for HttpPut requests, which do not require any specific parameter in the request body.
 The properties in 'MovieCreate' and 'MovieUpdate' has JsonPropertyName attributes, which I use to get the database column name in snake case for creating dynamcal SQL queries in CustomSqlServices.cs.
 The JsonPropertyName attributes are not necessary for 'MovieResponse', because of the 'Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true' setting in Program.cs.
 The OmdbMovie model class has properties corresponding to the JSON object fetched from the API call to OMDb API.
