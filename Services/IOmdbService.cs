@@ -1,7 +1,15 @@
-﻿namespace GhiblipediaAPI.Services
+﻿using GhiblipediaAPI.Models;
+
+namespace GhiblipediaAPI.Services
 {
     public interface IOmdbService
     {
-        //Fyll i, lägg till i Program.cs
+        Task<OmdbMovie> GetOmdbMovie(string title);
+
+        Task<string?> GetOmdbFullPlot(string title);
+
+        Task<string> GetMovieDataAsync(string url);
+
+        MovieCreate ConvertOmdbMovieToMovieCreate(OmdbMovie omdbMovie);
     }
 }

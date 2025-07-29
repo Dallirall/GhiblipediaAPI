@@ -1,7 +1,11 @@
 # GhiblipediaAPI
 
-This API functions as the backend to the Ghiblipedia website. The frontend developement is made by [AMD-93](https://github.com/AMD-93), who is the owner of this project.
+This API provides backend functionalities to the Ghiblipedia website. The frontend developement is made by [AMD-93](https://github.com/AMD-93), who is the owner of this project.
+This API was originally made by [Dallirall](https://github.com/Dallirall/), 
+but since August 2025 this project is continued on the [GhiblipediaAPI fork](https://github.com/AMD-93/GhiblipediaAPI) on AMD-93's GitHub repo.
+The original repo on Dallirall's GitHub will be archived.
 
+<br>
 
 ## To future developers of this API
 
@@ -57,9 +61,6 @@ Here follows some general steps for you to set up the environment on your local 
 	- "OmdbApi": {
     "ApiKey": [Our OMDb API key]
 	}
-	- "Jwt": {
-    "JwtAuthority": [Our Auth0 domain adress (found in the account on Auth0)]
-	}
 - In Visual Studio, right click on the Dockerfile in the solution explorer and select 'Build Docker Image'.
 - Now when you run/debug the application, instead of 'http' or 'https', the run button should say 'Container (Dockerfile)', otherwise select that option in the drop-down menu.
 - Run the application. It should start a new Docker container. You can test if it works by calling the API through Postman (if not installed, install it). 
@@ -76,17 +77,17 @@ and if you want the full plot, you have to make another call with the &plot=full
 The second call is to get the full plot, which is stored in the 'plot' column of the 'movies' table.
 The PUT endpoints is for updating an optional amount of properties to a db row. The columns 'japanese_title', 'trailer_url' and 'tags' (which can store an array of strings) in the 'movies' table needs to be manually updated, as this data is not available on OMDb.
 The Japanese titles have been aquired from [Studio Ghiblis official website](https://www.ghibli.jp/works/), and the romanization has been done by me, but can usually be found elswhere, such as the movie's Wikipedia page.
-- __Models:__ The model class 'MovieGet' is for HttpGet requests, where read-only fields ('movie_id' and 'created_at') are included,
-and the model class 'MoviePostPut' is for HttpPost and Put requests, where only writable fields are included, as 'movie_id' and 'created_at' are generated in the database and should not be assigned any values manually.
-The properties in 'MoviePostPut' has JsonPropertyName attributes, which I use to get the database column name in snake case for creating dynamcal SQL queries in CustomSqlServices.cs.
-The JsonPropertyName attributes are not necessary for 'MovieGet', because of the 'Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true' setting in Program.cs.
-The OmdbMovie class has properties corresponding to the JSON object got from the API call to OMDb API.
+- __Models:__ The model class 'MovieResponse' is for HttpGet requests, where read-only fields ('id' and 'created_at') are included.
+The model class 'MovieCreate' is for HttpPost request, which require a value for the EnglishTitle property, and where only writable properties are included, as 'id' and 'created_at' are generated in the database and should not be assigned any values manually.
+The 'MovieUpdate' class model is for HttpPut requests, which do not require any specific parameter in the request body.
+The properties in 'MovieCreate' and 'MovieUpdate' has JsonPropertyName attributes, which I use to get the database column name in snake case for creating dynamcal SQL queries in CustomSqlServices.cs.
+The JsonPropertyName attributes are not necessary for 'MovieResponse', because of the 'Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true' setting in Program.cs.
+The OmdbMovie model class has properties corresponding to the JSON object fetched from the API call to OMDb API.
 - __Dependencies (some of them):__ 
 	- ORM: Dapper
 	- Object-to-object mapper: Automapper
 	- Npgsql: .NET Data provider for PostgreSQL
-	- Microsoft.AspNetCore.Authentication.JwtBearer: The work on authentication and security is still in progress. It's unclear if this package is needed.
-
+	
 
 ### Good to know 
 Here are some notes about things you might want to know.

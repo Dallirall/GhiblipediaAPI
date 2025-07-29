@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 namespace GhiblipediaAPI.Controllers
 {
     [ApiController]
-    [Route("api/[controller]/")] //Sets the default route for API call URLs to /api/Movies/
+    [Route("api/[controller]/")]
     public class MoviesController : ControllerBase
     {
         private readonly IMovieRepository _movieRepo;
@@ -25,7 +25,7 @@ namespace GhiblipediaAPI.Controllers
 
         [HttpGet]
         [Route("")]
-        public async Task<ActionResult<IEnumerable<MovieGet>>> GetAll()
+        public async Task<ActionResult<IEnumerable<MovieResponse>>> GetAll()
         {            
             var movies = await _movieRepo.GetAllMovies();
             if (movies == null) return NotFound();
@@ -35,7 +35,7 @@ namespace GhiblipediaAPI.Controllers
 
         [HttpGet]
         [Route("{id:int}")]        
-        public async Task<ActionResult<MovieGet>> GetByID(int id)
+        public async Task<ActionResult<MovieResponse>> GetByID(int id)
         {
             try
             {
@@ -54,7 +54,7 @@ namespace GhiblipediaAPI.Controllers
                 
         [HttpGet]
         [Route("{englishTitle}")]        //Ändra ev till 'title' och kolla språk backend
-        public async Task<ActionResult<MovieGet>> GetByTitle(string englishTitle)
+        public async Task<ActionResult<MovieResponse>> GetByTitle(string englishTitle)
         {
             try
             {
@@ -74,35 +74,17 @@ namespace GhiblipediaAPI.Controllers
         //Insert a movie object with data from the JSON body into database. Use when you want to assign your own values to the object properties.
         [HttpPost]
         [Route("")]
-        public async Task<IActionResult> PostMovie([FromBody] MoviePostPut movie)
+        public async Task<IActionResult> PostMovie([FromBody] MovieCreate movie)
         {
-            if (movie == null) return UnprocessableEntity(); 
-            bool isSuccess = await _movieRepo.PostMovieInDB(movie);
-            
-            if (!isSuccess)
+            if (movie == null) return BadRequest();
+
+            try
             {
-                return StatusCode(500, "Internal server error");
+                await _movieRepo.PostMovieInDB(movie);
             }
-
-            return CreatedAtAction(nameof(GetAll), movie);
-        }
-
-        //Flytta över till egen controller
-        //Searches OMDb API for the specified movie. Inserts that movie into database, assigning the retrieved data from OMDb to the corresponding database columns. 
-        [HttpPost]
-        [Route("omdb/{englishTitle}")]
-        public async Task<IActionResult> PostMovieInDBWithDataFromOmdb(string englishTitle)
-        {
-            if (englishTitle == null) return UnprocessableEntity();
-
-            MoviePostPut movie = new MoviePostPut();
-            movie = await _movieRepo.ConvertOmdbMovieToMoviePost(englishTitle); //Gets movie data from OMDb API and converts to movie object.
-
-            bool isSuccess = await _movieRepo.PostMovieInDB(movie);
-
-            if (!isSuccess)
+            catch (Exception ex)
             {
-                return StatusCode(500, "Internal server error");
+                return StatusCode(500, ex.Message);
             }
 
             return CreatedAtAction(nameof(GetAll), movie);
@@ -111,24 +93,23 @@ namespace GhiblipediaAPI.Controllers
         //Update a movie in database. Caller can omit fields in the request body if those should not be updated.
         [HttpPut]
         [Route("{englishTitle}")]
-        public async Task<IActionResult> UpdateMovieByTitle(string englishTitle, [FromBody] MoviePostPut MovieNewData)
+        public async Task<IActionResult> UpdateMovieByTitle(string englishTitle, [FromBody] MovieUpdate MovieNewData)
         {
-            if (MovieNewData == null) return UnprocessableEntity();
+            if (MovieNewData == null) return BadRequest();
 
             try
             {
-                MovieGet movieFromDb = await _movieRepo.GetMovieByTitle(englishTitle);
+                MovieResponse movieFromDb = await _movieRepo.GetMovieByTitle(englishTitle);
                 if (movieFromDb == null)
                 {
-                    Console.WriteLine($"The movie {englishTitle} does not yet exist in database. ");
-                    return BadRequest();
+                    throw new Exception($"The movie {englishTitle} does not yet exist in database. ");
                 }
 
-                await _movieRepo.UpdateMovieInDb(movieFromDb.MovieId, MovieNewData);
+                await _movieRepo.UpdateMovieInDb(movieFromDb.Id, MovieNewData);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, ex);
+                return StatusCode(500, ex.Message);
             }
 
             return Ok();
@@ -136,30 +117,74 @@ namespace GhiblipediaAPI.Controllers
 
         //Update a movie in database. Caller can omit fields in the request body if those should not be updated.
         [HttpPut]
-        [Route("{movieID:int}")]
-        public async Task<IActionResult> UpdateMovieById(int movieID, [FromBody] MoviePostPut MovieNewData)
+        [Route("{id:int}")]
+        public async Task<IActionResult> UpdateMovieById(int id, [FromBody] MovieUpdate MovieNewData)
         {
-            if (MovieNewData == null) return UnprocessableEntity();
+            if (MovieNewData == null) return BadRequest();
 
             try
             {
-                MovieGet movieFromDb = await _movieRepo.GetMovieByID(movieID);
+                MovieResponse movieFromDb = await _movieRepo.GetMovieByID(id);
                 if (movieFromDb == null)
                 {
-                    Console.WriteLine($"The movie does not yet exist in database. ");
-                    return BadRequest();
+                    throw new Exception($"The movie with ID {id} does not yet exist in database. ");
                 }
 
-                await _movieRepo.UpdateMovieInDb(movieFromDb.MovieId, MovieNewData);
+                await _movieRepo.UpdateMovieInDb(movieFromDb.Id, MovieNewData);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, ex);
+                return StatusCode(500, ex.Message);
             }
 
             return Ok();
         }
 
+        [HttpDelete]
+        [Route("{id:int}")]
+        public async Task<IActionResult> DeleteMovieById(int id)
+        {            
+            try
+            {
+                MovieResponse movieFromDb = await _movieRepo.GetMovieByID(id);
+                if (movieFromDb == null)
+                {
+                    throw new Exception($"The movie with ID {id} does not exist in database. ");
+                }
+
+                await _movieRepo.DeleteMovie(id);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+
+            return Ok();
+        }
+
+        [HttpDelete]
+        [Route("{englishTitle}")]
+        public async Task<IActionResult> DeleteMovieByTitle(string englishTitle)
+        {
+            if (englishTitle == null) return BadRequest();
+
+            try
+            {
+                MovieResponse movieFromDb = await _movieRepo.GetMovieByTitle(englishTitle);
+                if (movieFromDb == null)
+                {
+                    throw new Exception($"The movie '{englishTitle}' does not exist in database. ");
+                }
+
+                await _movieRepo.DeleteMovie(movieFromDb.Id);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+
+            return Ok();
+        }
 
 
     }

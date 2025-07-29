@@ -1,24 +1,27 @@
-﻿using GhiblipediaAPI.Models;
+﻿using AutoMapper;
+using GhiblipediaAPI.Models;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 
 namespace GhiblipediaAPI.Services
 {
-    //For transactions between this API and OMDb API
-    public class OmdbService
+    //For logic involving OMDb API
+    public class OmdbService : IOmdbService
     {
         private static readonly HttpClient client = new HttpClient();
         private readonly string _apiKey;
+        private readonly IMapper _mapper;
 
-        public OmdbService(IOptions<OmdbAPIOptions> options)
+        public OmdbService(IOptions<OmdbAPIOptions> options, IMapper mapper)
         {
             _apiKey = options.Value.ApiKey
                 ?? throw new InvalidOperationException("API key 'OmdbApi:ApiKey' is not configured.");
+            _mapper = mapper;
         }
 
-        public async Task<OmdbMovie> GetOmdbMovie(string movieTitle)
+        public async Task<OmdbMovie> GetOmdbMovie(string title)
         {  
-            string url = $"http://www.omdbapi.com/?apikey={_apiKey}&t={movieTitle}";
+            string url = $"http://www.omdbapi.com/?apikey={_apiKey}&t={title}";
 
             var movieData = await GetMovieDataAsync(url);
             OmdbMovie movie = JsonConvert.DeserializeObject<OmdbMovie>(movieData.ToString());
@@ -32,9 +35,10 @@ namespace GhiblipediaAPI.Services
             }
         }
 
-        public async Task<string?> GetOmdbFullPlot(string movieTitle)
+        //Fetches the full plot data of a movie from OMDb API.
+        public async Task<string?> GetOmdbFullPlot(string title)
         {
-            string url = $"http://www.omdbapi.com/?apikey={_apiKey}&t={movieTitle}&plot=full";
+            string url = $"http://www.omdbapi.com/?apikey={_apiKey}&t={title}&plot=full";
             
             var movieData = await GetMovieDataAsync(url);
             OmdbMovie movie = JsonConvert.DeserializeObject<OmdbMovie>(movieData.ToString());
@@ -49,26 +53,32 @@ namespace GhiblipediaAPI.Services
         }
 
         //Sends a GET request to OMDb API and returns the JSON response as a string.
+        //Throws HttpRequestException if the response from OMDb is not successful.
         public async Task<string> GetMovieDataAsync(string url)
         {
-            try
+            var response = await client.SendAsync(new HttpRequestMessage()
             {
-                var response = await client.SendAsync(new HttpRequestMessage()
-                {
-                    Method = HttpMethod.Get,
-                    RequestUri = new Uri(url),
-                });
+                Method = HttpMethod.Get,
+                RequestUri = new Uri(url),
+            });
 
-                response.EnsureSuccessStatusCode();
+            response.EnsureSuccessStatusCode();
 
-                return await response.Content.ReadAsStringAsync();                
-            }
-            catch (HttpRequestException ex)
-            {
-                Console.WriteLine($"Request error: {ex.Message}");
-                return null;
-            }
+            return await response.Content.ReadAsStringAsync();                
+            
         }
-       
+
+        //Converts by mapping values between the models' properties.
+        public MovieCreate ConvertOmdbMovieToMovieCreate(OmdbMovie omdbMovie)
+        {
+            if (omdbMovie != null)
+            {
+                MovieCreate movie = _mapper.Map<MovieCreate>(omdbMovie);
+                return movie;
+            }
+
+            return null;
+        }
+
     }
 }

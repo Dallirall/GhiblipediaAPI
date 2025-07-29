@@ -58,7 +58,7 @@ builder.Services.AddScoped<IDbConnection>(sp =>
 
 builder.Services.Configure<OmdbAPIOptions>(builder.Configuration.GetSection("OmdbApi")); //Sets the value to the OMDb API key
 
-builder.Services.AddTransient<OmdbService>();
+builder.Services.AddTransient<IOmdbService, OmdbService>();
 
 builder.Services.AddTransient<IMovieRepository, MovieRepository>();
 

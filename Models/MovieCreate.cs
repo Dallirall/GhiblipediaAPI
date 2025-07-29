@@ -1,13 +1,15 @@
 ﻿using Newtonsoft.Json;
+using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
 namespace GhiblipediaAPI.Models
 {
-    //Data model for HttpPost, HttpPut and HttpPatch requests from frontend.
-    public class MoviePostPut
+    //Data model for HttpPost requests (where english title is required).
+    public class MovieCreate
     {
         private string[]? _tags;
 
+        [Required]
         [JsonPropertyName("english_title")]
         public string? EnglishTitle { get; set; }
         [JsonPropertyName("japanese_title")]
