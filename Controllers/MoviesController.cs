@@ -105,7 +105,7 @@ namespace GhiblipediaAPI.Controllers
                     throw new Exception($"The movie {englishTitle} does not yet exist in database. ");
                 }
 
-                await _movieRepo.UpdateMovieInDb(movieFromDb.MovieId, MovieNewData);
+                await _movieRepo.UpdateMovieInDb(movieFromDb.Id, MovieNewData);
             }
             catch (Exception ex)
             {
@@ -117,20 +117,20 @@ namespace GhiblipediaAPI.Controllers
 
         //Update a movie in database. Caller can omit fields in the request body if those should not be updated.
         [HttpPut]
-        [Route("{movieID:int}")]
-        public async Task<IActionResult> UpdateMovieById(int movieID, [FromBody] MovieUpdate MovieNewData)
+        [Route("{id:int}")]
+        public async Task<IActionResult> UpdateMovieById(int id, [FromBody] MovieUpdate MovieNewData)
         {
             if (MovieNewData == null) return BadRequest();
 
             try
             {
-                MovieResponse movieFromDb = await _movieRepo.GetMovieByID(movieID);
+                MovieResponse movieFromDb = await _movieRepo.GetMovieByID(id);
                 if (movieFromDb == null)
                 {
-                    throw new Exception($"The movie does not yet exist in database. ");
+                    throw new Exception($"The movie with ID {id} does not yet exist in database. ");
                 }
 
-                await _movieRepo.UpdateMovieInDb(movieFromDb.MovieId, MovieNewData);
+                await _movieRepo.UpdateMovieInDb(movieFromDb.Id, MovieNewData);
             }
             catch (Exception ex)
             {
@@ -140,6 +140,51 @@ namespace GhiblipediaAPI.Controllers
             return Ok();
         }
 
+        [HttpDelete]
+        [Route("{id:int}")]
+        public async Task<IActionResult> DeleteMovieById(int id)
+        {            
+            try
+            {
+                MovieResponse movieFromDb = await _movieRepo.GetMovieByID(id);
+                if (movieFromDb == null)
+                {
+                    throw new Exception($"The movie with ID {id} does not exist in database. ");
+                }
+
+                await _movieRepo.DeleteMovie(id);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+
+            return Ok();
+        }
+
+        [HttpDelete]
+        [Route("{englishTitle}")]
+        public async Task<IActionResult> DeleteMovieByTitle(string englishTitle)
+        {
+            if (englishTitle == null) return BadRequest();
+
+            try
+            {
+                MovieResponse movieFromDb = await _movieRepo.GetMovieByTitle(englishTitle);
+                if (movieFromDb == null)
+                {
+                    throw new Exception($"The movie '{englishTitle}' does not exist in database. ");
+                }
+
+                await _movieRepo.DeleteMovie(movieFromDb.Id);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+
+            return Ok();
+        }
 
 
     }

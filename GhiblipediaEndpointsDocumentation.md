@@ -10,7 +10,7 @@ URL for api calls to the service hosted on Render: https://ghiblipediaapi.onrend
 
 - /api/movies - Gets all movie objects from database including all object properties.<br>
   > _Ex: GET /api/movies_
-- /api/movies/{movieID} - Gets a movie object from database, by its ID.
+- /api/movies/{id} - Gets a movie object from database, by its ID.
   > _Ex: GET api/movies/1_
 - /api/movies/{englishTitle} - Gets a movie object from database, by its english title.
   > _Ex: GET api/movies/spirited away_

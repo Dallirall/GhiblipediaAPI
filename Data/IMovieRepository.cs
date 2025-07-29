@@ -4,6 +4,7 @@ namespace GhiblipediaAPI.Data
 {
     public interface IMovieRepository
     {
+        Task DeleteMovie(int id);
         Task<IEnumerable<MovieResponse>> GetAllMovies();
 
         public Task<MovieResponse> GetMovieByID(int id);
@@ -12,7 +13,7 @@ namespace GhiblipediaAPI.Data
 
         public Task PostMovieInDB(MovieCreate movie);
 
-        public Task UpdateMovieInDb(int? id, MovieUpdate movie);
+        public Task UpdateMovieInDb(int id, MovieUpdate movie);
 
     }
 }

@@ -34,11 +34,11 @@ namespace GhiblipediaAPI.Data
 
         public async Task<MovieResponse> GetMovieByID(int id)
         {
-            string sqlQuery = $"SELECT * FROM movies WHERE movie_id = @movie_id;";
+            string sqlQuery = $"SELECT * FROM movies WHERE id = @Id;";
 
             try
             {
-                var result = await _db.QueryFirstOrDefaultAsync<MovieResponse>(sqlQuery, new { movie_id = id });
+                var result = await _db.QueryFirstOrDefaultAsync<MovieResponse>(sqlQuery, new { Id = id });
                 if (result == null) return null;
 
                 return result;
@@ -87,17 +87,30 @@ namespace GhiblipediaAPI.Data
         }
 
         //Updates the specified movie in the database with the populated properties of the passed movieNewData object.
-        public async Task UpdateMovieInDb(int? id, MovieUpdate movieNewData)
+        public async Task UpdateMovieInDb(int id, MovieUpdate movieNewData)
         {
-
+            //Onödigt?
             if (movieNewData == null) throw new ArgumentNullException(nameof(movieNewData), "Could not find data to update. ");
-            if (id == null) throw new ArgumentException("The value for parameter 'id' is missing. ", nameof(id));
-
-            string updateQuery = CustomSqlServices.CreateUpdateQueryStringFromDTO(movieNewData, "movies", $"movie_id = {id}");
+            
+            string updateQuery = CustomSqlServices.CreateUpdateQueryStringFromDTO(movieNewData, "movies", $"id = {id}");
 
             int rowsUpdated = 0;
             rowsUpdated = await _db.ExecuteAsync(updateQuery, movieNewData);
             
         }
+        public async Task DeleteMovie(int id)
+        {
+            string sqlQuery = $"DELETE FROM movies WHERE id = @Id;";
+            int rowsUpdated = 0;
+                        
+            rowsUpdated = await _db.ExecuteAsync(sqlQuery, new { Id = id });
+
+            if (rowsUpdated == 0)
+            {
+                throw new Exception($"The delete operation on the object with ID {id} was unsuccessful. No row in database with the ID could be found. ");
+            }            
+        }
+
+
     }
 }
