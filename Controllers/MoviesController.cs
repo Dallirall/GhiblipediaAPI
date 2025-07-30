@@ -29,10 +29,17 @@ namespace GhiblipediaAPI.Controllers
         [Route("")]
         public async Task<ActionResult<IEnumerable<MovieResponse>>> GetAll()
         {            
-            var movies = await _movieRepo.GetAllMovies();
-            if (movies == null) return NotFound();
+            try
+            {
+                var movies = await _movieRepo.GetAllMovies();
+                if (movies == null) return NotFound();
 
-            return Ok(movies);
+                return Ok(movies);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
         }
 
         [HttpGet]
@@ -49,13 +56,12 @@ namespace GhiblipediaAPI.Controllers
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Controller caught: " + ex.ToString());
-                return StatusCode(500, "Internal server error");
+                return StatusCode(500, ex.Message);
             }
         }
                 
         [HttpGet]
-        [Route("{englishTitle}")]        //Ändra ev till 'title' och kolla språk backend
+        [Route("{englishTitle}")]
         public async Task<ActionResult<MovieResponse>> GetByTitle(string englishTitle)
         {
             try
@@ -68,8 +74,7 @@ namespace GhiblipediaAPI.Controllers
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Controller caught: " + ex.ToString());
-                return StatusCode(500, "Internal server error");
+                return StatusCode(500, ex.Message);
             }
         }
 
@@ -164,8 +169,7 @@ namespace GhiblipediaAPI.Controllers
 
             return Ok();
         }
-
-        //Delete a movie in database. Todo in future: Make sure to do an authorization check before granting access to this endpoint.
+                
         [HttpDelete]
         [Route("{englishTitle}")]
         public async Task<IActionResult> DeleteMovieByTitle(string englishTitle)
