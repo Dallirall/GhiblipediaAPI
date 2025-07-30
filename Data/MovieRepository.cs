@@ -10,7 +10,7 @@ using System.Linq;
 
 namespace GhiblipediaAPI.Data
 {
-    //Class for all business logic on the database's 'movies' table.
+    //For business logic on the database's 'movies' table.
     public class MovieRepository : IMovieRepository
     {
         private readonly IDbConnection _db;
@@ -26,10 +26,17 @@ namespace GhiblipediaAPI.Data
         {
             string sqlQuery = "SELECT * FROM movies;";
 
-            var result = await _db.QueryAsync<MovieResponse>(sqlQuery);
-            if (result == null) return null;
+            try
+            {
+                var result = await _db.QueryAsync<MovieResponse>(sqlQuery);
+                if (result == null) return null;
 
-            return result;
+                return result;
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
         }
 
         public async Task<MovieResponse> GetMovieByID(int id)
@@ -45,15 +52,12 @@ namespace GhiblipediaAPI.Data
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Detailed error: " + ex.ToString());
                 throw;
             }
-
         }
 
         public async Task<MovieResponse> GetMovieByTitle(string englishTitle)
-        {
-            //Leta först i engtitle sen japtitle
+        {            
             string sqlQuery = $"SELECT * FROM movies WHERE LOWER(english_title) = LOWER(@english_title);";
 
             try
@@ -65,7 +69,6 @@ namespace GhiblipediaAPI.Data
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Detailed error: " + ex.ToString());
                 throw;
             }
         }
@@ -74,7 +77,7 @@ namespace GhiblipediaAPI.Data
         {
             if (movie == null) throw new ArgumentNullException(nameof(movie), "Could not find the data to post in database");
 
-            if (movie.EnglishTitle == null) throw new ArgumentException("The English title of the movie is required. ");
+            if (movie.EnglishTitle == null) throw new ArgumentException($"The property {nameof(movie.EnglishTitle)} cannot be null. ", nameof(movie.EnglishTitle));
 
             var existingMovie = await GetMovieByTitle(movie.EnglishTitle);
 
@@ -89,13 +92,11 @@ namespace GhiblipediaAPI.Data
         //Updates the specified movie in the database with the populated properties of the passed movieNewData object.
         public async Task UpdateMovieInDb(int id, MovieUpdate movieNewData)
         {
-            //Onödigt?
             if (movieNewData == null) throw new ArgumentNullException(nameof(movieNewData), "Could not find data to update. ");
             
             string updateQuery = CustomSqlServices.CreateUpdateQueryStringFromDTO(movieNewData, "movies", $"id = {id}");
 
-            int rowsUpdated = 0;
-            rowsUpdated = await _db.ExecuteAsync(updateQuery, movieNewData);
+            await _db.ExecuteAsync(updateQuery, movieNewData);
             
         }
         public async Task DeleteMovie(int id)

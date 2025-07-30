@@ -1,4 +1,5 @@
-﻿using GhiblipediaAPI.Data;
+﻿using Asp.Versioning;
+using GhiblipediaAPI.Data;
 using GhiblipediaAPI.Models;
 using GhiblipediaAPI.Services;
 using Microsoft.AspNetCore.Http;
@@ -7,8 +8,8 @@ using Microsoft.AspNetCore.Mvc;
 namespace GhiblipediaAPI.Controllers
 {
     //For transactions with OMDb API
-    [Route("api/[controller]")]
-    [ApiController]
+    [Route("api/v{version:apiVersion}/[controller]/")]
+    [ApiVersion("1.0")]
     public class OmdbController : ControllerBase
     {
         private readonly IOmdbService _omdbService;
@@ -45,7 +46,7 @@ namespace GhiblipediaAPI.Controllers
             }
         }
 
-        //Searches OMDb API for the specified movie. Inserts that movie into database, assigning the retrieved data from OMDb to the corresponding database columns. 
+        //Searches OMDb API for the specified movie. Inserts that movie into the Ghiblipedia database, assigning the retrieved data from OMDb to the corresponding database columns. 
         [HttpPost]
         [Route("{title}")]
         public async Task<IActionResult> PostMovieInDBWithDataFromOmdb(string title)
@@ -62,7 +63,7 @@ namespace GhiblipediaAPI.Controllers
                                 
                 await _movieRepo.PostMovieInDB(movie);
 
-                return Created(); //ToDo: Fix proper return for frontend
+                return Created();
 
             }
             catch (Exception ex)

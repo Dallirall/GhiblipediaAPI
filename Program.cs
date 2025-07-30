@@ -1,3 +1,4 @@
+using Asp.Versioning;
 using GhiblipediaAPI.Data;
 using GhiblipediaAPI.Services;
 using Microsoft.Data.SqlClient;
@@ -12,7 +13,7 @@ using System.Web;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddAutoMapper(typeof(Program)); //For mapping between movie classes.
+builder.Services.AddAutoMapper(typeof(Program)); //For mapping between movie model classes.
 
 builder.Services.AddCors(options =>
 {
@@ -41,6 +42,15 @@ builder.Services.AddSwaggerGen(options =>
         Title = "My API",
         Version = "v1"
     });
+});
+
+builder.Services.AddApiVersioning(options =>
+{
+    options.DefaultApiVersion = new ApiVersion(1, 0);
+    options.AssumeDefaultVersionWhenUnspecified = true;
+    options.ReportApiVersions = true;
+
+    options.ApiVersionReader = new UrlSegmentApiVersionReader();
 });
 
 
@@ -88,7 +98,6 @@ else
 
 
 app.UseHttpsRedirection();
-
 
 app.UseCors();
 

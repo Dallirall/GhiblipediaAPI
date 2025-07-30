@@ -31,9 +31,9 @@ namespace GhiblipediaAPI.Models
         [JsonPropertyName("running_time")]
         public string? RunningTime { get; set; }
 
-        /*When mapping from the JSON body, an empty 'Tags' field is stored as an empty array in the Tags property,
-        which risks unintentional overwriting of existing values on HttpPut requests. 
-        That's why I make sure to null the value in these cases.*/
+        /*When mapping from the JSON body, an unassigned 'Tags' field is stored as an empty array in the Tags property,
+        which is then stored in the database, instead of leaving the column as null. 
+        To reduce complications I therefore null the value in these cases.*/
         [JsonPropertyName("tags")]
         public string[]? Tags 
         { 

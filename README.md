@@ -23,7 +23,7 @@ Here follows some documentation of the project.
 
 - __Render.com:__ This is the hosting platform where the project is deployed. 	
 Render will automatically deploy commits to the connected GitHub repo's main branch, although it's faster to manually deploy from the API's main page on Render. 
-API calls are made to https://ghiblipedia.onrender.com/api/. For further information about the endpoints, see 'GhiblipediaEndpointsDocumentation.md' in this repos source folder.
+API calls are made to https://ghiblipedia.onrender.com/api/v{version number}. For further information about the endpoints, see 'GhiblipediaEndpointsDocumentation.md' in this repos source folder.
 At the moment of writing, we use the free-tier, which comes with some restrictions, mainly the cold-start (which takes up to 1 minute) after 15 minutes without receiving inbound traffic.
 
 - __Frontend App (Client):__ We use a static site for the frontend, also deployed on Render. Calls are made from here to the backend API web service.
@@ -66,7 +66,7 @@ Here follows some general steps for you to set up the environment on your local 
 - In Visual Studio, right click on the Dockerfile in the solution explorer and select 'Build Docker Image'.
 - Now when you run/debug the application, instead of 'http' or 'https', the run button should say 'Container (Dockerfile)', otherwise select that option in the drop-down menu.
 - Run the application. It should start a new Docker container. You can test if it works by calling the API through Postman (if not installed, install it). 
-Try doing a GET request with this url: http://localhost:32770/api/movies. 
+Try doing a GET request with this url: http://localhost:32770/api/v1/movies. 
 If it doesen't find the API, open Docker desktop and check the running containers ports. By default it's usually 32770:8080 for HTTP requests, but it might be something else for you perhaps, in which case you use that port in the url instead. 
 
 I hope this works. Remember that when you do git commits and push to the main branch, those changes will be deployed, so if you don't want your changes to go live, push to another branch.
