@@ -13,7 +13,7 @@ using System.Web;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddAutoMapper(typeof(Program)); //For mapping between movie classes.
+builder.Services.AddAutoMapper(typeof(Program)); //For mapping between movie model classes.
 
 builder.Services.AddCors(options =>
 {
@@ -50,7 +50,6 @@ builder.Services.AddApiVersioning(options =>
     options.AssumeDefaultVersionWhenUnspecified = true;
     options.ReportApiVersions = true;
 
-    // Use URL segment versioning
     options.ApiVersionReader = new UrlSegmentApiVersionReader();
 });
 
@@ -99,7 +98,6 @@ else
 
 
 app.UseHttpsRedirection();
-
 
 app.UseCors();
 

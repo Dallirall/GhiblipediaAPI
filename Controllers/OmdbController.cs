@@ -46,7 +46,7 @@ namespace GhiblipediaAPI.Controllers
             }
         }
 
-        //Searches OMDb API for the specified movie. Inserts that movie into database, assigning the retrieved data from OMDb to the corresponding database columns. 
+        //Searches OMDb API for the specified movie. Inserts that movie into the Ghiblipedia database, assigning the retrieved data from OMDb to the corresponding database columns. 
         [HttpPost]
         [Route("{title}")]
         public async Task<IActionResult> PostMovieInDBWithDataFromOmdb(string title)
@@ -63,7 +63,7 @@ namespace GhiblipediaAPI.Controllers
                                 
                 await _movieRepo.PostMovieInDB(movie);
 
-                return Created(); //ToDo: Fix proper return for frontend
+                return Created();
 
             }
             catch (Exception ex)

@@ -5,7 +5,7 @@ namespace GhiblipediaAPI
 {
     public class MappingProfile : Profile
     {
-        //For mapping between movie classes using AutoMapper.
+        //For mapping between movie model classes using AutoMapper.
         public MappingProfile()
         {
             CreateMap<OmdbMovie, MovieCreate>()                

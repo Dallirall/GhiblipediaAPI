@@ -7,7 +7,7 @@ namespace GhiblipediaAPI.Services
     //For building SQL strings dynamically. Not tested for security yet.
     public class CustomSqlServices
     {
-        //Returns an INSERT SQL string for the passed data transfer object's [JsonPropertyName] name value (of properties with assigned values).
+        //Returns an INSERT SQL string for the passed DTO's [JsonPropertyName] name value (of properties with assigned values).
         //The VALUES of the query string are in the form of placeholders ('@Value').
         public static string CreateInsertQueryStringFromDTO(object dto, string tableName)
         {
@@ -29,7 +29,7 @@ namespace GhiblipediaAPI.Services
             return query;           
         }
 
-        //Returns an UPDATE SQL string for the passed object's properties that have assigned values. The values are in the form of placeholders ('@Value').
+        //Returns an UPDATE SQL string for the passed DTO's properties that have assigned values. The values are in the form of placeholders ('@Value').
         //Pass in the 'whereConditionClause' param in this example format: 'id = {obj.Id}'
         public static string CreateUpdateQueryStringFromDTO(object dto, string tableName, string whereConditionClause)
         {            

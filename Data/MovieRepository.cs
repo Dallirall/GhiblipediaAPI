@@ -10,7 +10,7 @@ using System.Linq;
 
 namespace GhiblipediaAPI.Data
 {
-    //Class for all business logic on the database's 'movies' table.
+    //For business logic on the database's 'movies' table.
     public class MovieRepository : IMovieRepository
     {
         private readonly IDbConnection _db;
@@ -54,7 +54,6 @@ namespace GhiblipediaAPI.Data
             {
                 throw;
             }
-
         }
 
         public async Task<MovieResponse> GetMovieByTitle(string englishTitle)
@@ -73,9 +72,6 @@ namespace GhiblipediaAPI.Data
                 throw;
             }
         }
-
-        //Är det dumt att ha try-catch i den här klassens metoder när controllern har try-catch, eller ska man bara throwa exceptions vid fel?
-        //Om jag har try-catch här, ska man kasta vidare ett fångat ex för att få med detaljerna?
 
         public async Task PostMovieInDB(MovieCreate movie)
         {

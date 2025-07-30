@@ -147,7 +147,6 @@ namespace GhiblipediaAPI.Controllers
             return Ok();
         }
 
-        //Delete a movie in database. Todo in future: Make sure to do an authorization check before granting access to this endpoint.
         [HttpDelete]
         [Route("{id:int}")]
         public async Task<IActionResult> DeleteMovieById(int id)
