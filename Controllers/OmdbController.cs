@@ -20,10 +20,10 @@ namespace GhiblipediaAPI.Controllers
             _omdbService = omdbService;
             _movieRepo = movieRepo;
         }
-
+                
         [HttpGet]
         [Route("{title}")]
-        public async Task<ActionResult<OmdbMovie>> GetByTitle(string title)
+        public async Task<ActionResult<OmdbMovie>> GetOmdbMovie(string title)
         {
             if (title == null) return BadRequest();
             try
