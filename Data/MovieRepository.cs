@@ -79,13 +79,20 @@ namespace GhiblipediaAPI.Data
 
             if (movie.EnglishTitle == null) throw new ArgumentException($"The property {nameof(movie.EnglishTitle)} cannot be null. ", nameof(movie.EnglishTitle));
 
-            var existingMovie = await GetMovieByTitle(movie.EnglishTitle);
+            try
+            {
+                var existingMovie = await GetMovieByTitle(movie.EnglishTitle);
 
-            if (existingMovie != null) throw new Exception($"The movie '{movie.EnglishTitle}' already exists in database. ");
+                if (existingMovie != null) throw new Exception($"The movie '{movie.EnglishTitle}' already exists in database. ");
 
-            string sqlQuery = CustomSqlServices.CreateInsertQueryStringFromDTO(movie, "movies");
+                string sqlQuery = CustomSqlServices.CreateInsertQueryStringFromDTO(movie, "movies");
 
-            await _db.ExecuteAsync(sqlQuery, movie);
+                await _db.ExecuteAsync(sqlQuery, movie);
+            }
+            catch (Exception ex) 
+            {
+                throw;
+            }
 
         }
 
@@ -96,8 +103,14 @@ namespace GhiblipediaAPI.Data
             
             string updateQuery = CustomSqlServices.CreateUpdateQueryStringFromDTO(movieNewData, "movies", $"id = {id}");
 
-            await _db.ExecuteAsync(updateQuery, movieNewData);
-            
+            try
+            {
+                await _db.ExecuteAsync(updateQuery, movieNewData);
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
         }
         public async Task DeleteMovie(int id)
         {
